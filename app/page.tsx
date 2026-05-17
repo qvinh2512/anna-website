@@ -12,7 +12,7 @@ export default function HomePage() {
 
           <div className="text-white/70 text-sm leading-loose mb-8">
             <p>📅 Sinh ngày <strong className="text-white">04.03.2014</strong></p>
-            <p>🏫 Học sinh lớp 6 · <strong className="text-white">Sedbergh Việt Nam</strong> (2024-2025)</p>
+            <p>🏫 Học sinh trường <strong className="text-white">Sedbergh Việt Nam</strong></p>
             <p>🎻 Năm nhất Trung cấp Violin 9 năm · <strong className="text-white">Nhạc viện TP. HCM</strong></p>
           </div>
 
