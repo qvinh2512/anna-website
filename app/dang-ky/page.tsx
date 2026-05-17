@@ -28,7 +28,9 @@ export default function DangKyPage() {
       <div className="text-center max-w-sm">
         <div className="text-6xl mb-4">📬</div>
         <h2 className="text-2xl font-semibold mb-3">Kiểm tra email nhé!</h2>
-        <p className="text-gray-500 text-sm mb-6">Chúng tôi đã gửi link xác nhận đến <strong>{form.email}</strong></p>
+        <p className="text-gray-500 text-sm mb-6">
+          Anna đã gửi link xác nhận đến <strong>{form.email}</strong> 💌
+        </p>
         <a href="/dang-nhap" className="px-6 py-2.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 transition-colors">
           Về trang đăng nhập
         </a>
