@@ -9,7 +9,7 @@ export default function HomePage() {
             Anna<br/><em className="text-yellow-400">Duyên An</em>
           </h1>
           <p className="text-white/60 text-base leading-relaxed max-w-sm mb-8">
-            Sinh ngày 04.03.2014 · Học sinh lớp 6 trường <strong className="text-white/80">Sedbergh Việt Nam</strong> · Năm nhất Trung cấp Violin 9 năm tại <strong className="text-white/80">Nhạc viện TP.HCM</strong>
+            Sinh ngày 04.03.2014<br/>Học sinh lớp 6 trường <strong className="text-white/80">Sedbergh Việt Nam</strong> (2024-2025)<br/>NămViolin 9 năm tại <strong className="text-white/80">Nhạc viện TP.HCM</strong>
           </p>
           <div className="flex flex-wrap gap-2 mb-10">
             {['🎻 Violin','🎨 Hội họa','🦷 Que sera sera'].map(t=>(
