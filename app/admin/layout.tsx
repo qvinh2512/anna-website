@@ -10,11 +10,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
           {[
-            ['🏠 Dashboard',     '/admin'],
-            ['📝 Bài viết',      '/admin/bai-viet'],
-            ['✏️ Viết bài mới',  '/admin/bai-viet/moi'],
-            ['👤 Thành viên',    '/admin/thanh-vien'],
-            ['⚙️ Cài đặt',      '/admin/cai-dat'],
+            ['🏠 Dashboard',        '/admin'],
+            ['📝 Bài viết',         '/admin/bai-viet'],
+            ['✏️ Viết bài mới',     '/admin/bai-viet/moi'],
+            ['🎻 Masterclass',      '/admin/masterclass'],
+            ['⭐ Giới thiệu',       '/admin/gioi-thieu'],
+            ['👤 Thành viên',       '/admin/thanh-vien'],
+            ['⚙️ Cài đặt',         '/admin/cai-dat'],
           ].map(([label, href]) => (
             <a key={href} href={href}
               className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-white/60 hover:text-white hover:bg-white/10 transition-colors">
