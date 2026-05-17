@@ -1,29 +1,34 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createClient } from './lib/supabase/client'
 
-const DREAM_CONTENT = {
-  violin: {
-    title: '🎻 Violin — Đam mê từ tiếng đàn đầu tiên',
-    body: 'Anna bắt đầu học violin từ nhỏ và hiện là học sinh năm nhất ngành Violin hệ Trung cấp 9 năm tại Nhạc viện Thành phố Hồ Chí Minh. Mỗi ngày luyện tập là một hành trình khám phá âm nhạc — từ các bài etude cơ bản đến những buổi Masterclass với các Giáo sư quốc tế. Anna đã tham gia nhiều buổi hòa tấu, biểu diễn tại các sân khấu lớn như Dalat Opera House. Ước mơ lớn nhất của Anna là trở thành nghệ sỹ violin chuyên nghiệp.',
-  },
-  'hoi-hoa': {
-    title: '🎨 Hội họa — Thế giới màu sắc của Anna',
-    body: 'Bên cạnh âm nhạc, hội họa là người bạn đồng hành thứ hai của Anna. Anna yêu thích vẽ tranh sơn dầu — từ tĩnh vật đến phong cảnh. Năm 2024, Anna cùng bạn Nguyên Khoa tổ chức triển lãm tranh từ thiện "Tết Yêu Thương, Xuân Chia Sẻ" tại M&M Workshop, Thủ Đức — bán tranh gây quỹ giúp các em nhỏ bệnh hiểm nghèo.',
-  },
-  'que-sera': {
-    title: '🦷 Que sera sera — Ước mơ Bác sỹ Nha khoa',
-    body: '"Que sera sera — whatever will be, will be." Anna có ước mơ thứ hai song song với âm nhạc: trở thành Bác sỹ Nha khoa. Anna tin rằng có thể vừa là nghệ sỹ violin vừa là bác sỹ — vì cả hai đều cần sự tỉ mỉ, kiên nhẫn và trái tim yêu thương con người.',
-  },
-}
+type DreamContent = { title: string; body: string }
 
 export default function HomePage() {
+  const supabase = createClient()
   const [activeDream, setActiveDream] = useState<string | null>(null)
+  const [dreamContent, setDreamContent] = useState<Record<string, DreamContent>>({
+    violin:     { title: '🎻 Violin — Đam mê từ tiếng đàn đầu tiên', body: '' },
+    'hoi-hoa':  { title: '🎨 Hội họa — Thế giới màu sắc của Anna', body: '' },
+    'que-sera': { title: '🦷 Que sera sera — Ước mơ Bác sỹ Nha khoa', body: '' },
+  })
+
+  useEffect(() => {
+    supabase.from('site_content').select('key,title,body').in('key', ['violin','hoi-hoa','que-sera'])
+      .then(({ data }) => {
+        if (data) {
+          const map: Record<string, DreamContent> = {}
+          data.forEach((d: any) => { map[d.key] = { title: d.title, body: d.body } })
+          setDreamContent(map)
+        }
+      })
+  }, [])
 
   const toggleDream = (key: string) => {
     setActiveDream(prev => prev === key ? null : key)
   }
 
-  const dream = activeDream ? DREAM_CONTENT[activeDream as keyof typeof DREAM_CONTENT] : null
+  const dream = activeDream ? dreamContent[activeDream] : null
 
   return (
     <div>
@@ -86,9 +91,78 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="bg-gray-800 flex items-center justify-center">
+        <div className="bg-gray-800 flex items-center justify-center py-16 px-8">
           <div className="text-center">
-            <div className="text-9xl mb-6 drop-shadow-2xl">🎻</div>
+            {/* Stradivarius Violin SVG */}
+            <div className="flex justify-center mb-8">
+              <svg width="220" height="380" viewBox="0 0 220 380" fill="none" xmlns="http://www.w3.org/2000/svg"
+                style={{filter:'drop-shadow(0 20px 60px rgba(0,0,0,0.8))'}}>
+                {/* Scroll / Pegbox */}
+                <path d="M108 8 C108 8 115 2 120 6 C125 10 123 18 118 20 C122 22 124 28 120 32 C116 36 110 34 108 30" fill="#8B4513" stroke="#5C2D0A" strokeWidth="1"/>
+                <path d="M108 30 L106 50 C106 50 104 52 106 54 L108 56 L112 56 L114 54 C116 52 114 50 114 50 L112 30" fill="#9B5523" stroke="#5C2D0A" strokeWidth="1"/>
+                {/* Pegs */}
+                <ellipse cx="104" cy="38" rx="4" ry="2" fill="#4A1C00" transform="rotate(-30 104 38)"/>
+                <ellipse cx="116" cy="43" rx="4" ry="2" fill="#4A1C00" transform="rotate(-30 116 43)"/>
+                <ellipse cx="104" cy="48" rx="4" ry="2" fill="#4A1C00" transform="rotate(-30 104 48)"/>
+                <ellipse cx="116" cy="33" rx="4" ry="2" fill="#4A1C00" transform="rotate(-30 116 33)"/>
+                {/* Neck */}
+                <path d="M104 56 L100 130 L120 130 L116 56 Z" fill="#7A3B10" stroke="#5C2D0A" strokeWidth="1"/>
+                {/* Fingerboard */}
+                <path d="M106 56 L103 128 L117 128 L114 56 Z" fill="#1a0a00"/>
+                {/* Nut */}
+                <rect x="104" y="126" width="12" height="4" rx="1" fill="#F5DEB3"/>
+                {/* Body top bout */}
+                <path d="M110 130 C80 130 58 148 56 168 C54 185 65 198 75 205 C60 212 50 228 50 248 C50 270 70 288 95 295 L95 310 L125 310 L125 295 C150 288 170 270 170 248 C170 228 160 212 145 205 C155 198 166 185 164 168 C162 148 140 130 110 130 Z"
+                  fill="url(#woodGrain)" stroke="#5C2D0A" strokeWidth="1.5"/>
+                {/* C-bouts waist */}
+                <path d="M75 205 C65 208 58 218 58 228 C58 238 65 245 75 248" fill="none" stroke="#5C2D0A" strokeWidth="2"/>
+                <path d="M145 205 C155 208 162 218 162 228 C162 238 155 245 145 248" fill="none" stroke="#5C2D0A" strokeWidth="2"/>
+                {/* Lower bout */}
+                <path d="M95 310 C70 310 48 292 48 268 C48 244 65 228 75 248 C85 268 95 295 110 295 C125 295 135 268 145 248 C155 228 172 244 172 268 C172 292 150 310 125 310 Z"
+                  fill="url(#woodGrain2)" stroke="#5C2D0A" strokeWidth="1.5"/>
+                {/* Purfling top */}
+                <path d="M110 133 C82 133 62 150 60 168 C58 184 68 197 78 204 C63 212 53 227 53 247 C53 268 72 286 97 293"
+                  fill="none" stroke="#2C1000" strokeWidth="2" opacity="0.6"/>
+                <path d="M110 133 C138 133 158 150 160 168 C162 184 152 197 142 204 C157 212 167 227 167 247 C167 268 148 286 123 293"
+                  fill="none" stroke="#2C1000" strokeWidth="2" opacity="0.6"/>
+                {/* F-holes */}
+                <path d="M88 210 C86 205 85 198 86 192 C87 186 90 183 91 178 M88 210 C90 212 91 214 90 216 C89 218 87 218 86 216 C85 214 86 212 88 210 M91 178 C92 176 94 176 95 178 C96 180 95 182 93 182 C91 182 90 180 91 178 M88 225 C86 230 85 238 86 244 C87 250 90 253 91 258 M88 225 C90 223 91 221 90 219 C89 217 87 217 86 219 C85 221 86 223 88 225"
+                  stroke="#1a0a00" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                <path d="M132 210 C134 205 135 198 134 192 C133 186 130 183 129 178 M132 210 C130 212 129 214 130 216 C131 218 133 218 134 216 C135 214 134 212 132 210 M129 178 C128 176 126 176 125 178 C124 180 125 182 127 182 C129 182 130 180 129 178 M132 225 C134 230 135 238 134 244 C133 250 130 253 129 258 M132 225 C130 223 129 221 130 219 C131 217 133 217 134 219 C135 221 134 223 132 225"
+                  stroke="#1a0a00" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                {/* Bridge */}
+                <path d="M97 265 L98 258 L100 256 L110 256 L120 256 L122 258 L123 265 Z" fill="#D4A96A" stroke="#8B6914" strokeWidth="0.5"/>
+                <path d="M99 265 L100 260 M110 265 L110 258 M121 265 L120 260" stroke="#8B6914" strokeWidth="0.5"/>
+                {/* Tailpiece */}
+                <path d="M100 310 L105 295 L115 295 L120 310 L118 315 L102 315 Z" fill="#2C1000" stroke="#1a0a00" strokeWidth="1"/>
+                {/* Strings */}
+                {[105, 108, 112, 115].map((x, i) => (
+                  <line key={i} x1={x} y1="56" x2={x + (i-1.5)*0.5} y2="312" stroke="#C0C0C0" strokeWidth="0.6" opacity="0.8"/>
+                ))}
+                {/* Shine/varnish highlight */}
+                <path d="M85 148 C80 155 78 165 80 175 C82 180 86 183 88 180" fill="none" stroke="white" strokeWidth="2" opacity="0.15" strokeLinecap="round"/>
+                <path d="M90 270 C86 278 85 288 87 296" fill="none" stroke="white" strokeWidth="1.5" opacity="0.12" strokeLinecap="round"/>
+                {/* Chin rest */}
+                <path d="M100 315 C95 318 92 325 95 330 C98 335 115 336 125 333 C130 331 130 325 127 320 L120 315 Z" fill="#1a0a00" stroke="#0a0500" strokeWidth="1"/>
+                {/* Gradients */}
+                <defs>
+                  <linearGradient id="woodGrain" x1="56" y1="130" x2="170" y2="310" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#C17F3C"/>
+                    <stop offset="30%" stopColor="#A0612A"/>
+                    <stop offset="60%" stopColor="#8B4513"/>
+                    <stop offset="80%" stopColor="#C17F3C"/>
+                    <stop offset="100%" stopColor="#8B4513"/>
+                  </linearGradient>
+                  <linearGradient id="woodGrain2" x1="48" y1="248" x2="172" y2="320" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#8B4513"/>
+                    <stop offset="40%" stopColor="#C17F3C"/>
+                    <stop offset="70%" stopColor="#A0612A"/>
+                    <stop offset="100%" stopColor="#8B4513"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <p className="text-white/30 text-xs italic mb-4">Stradivarius · 1715</p>
             <a href="https://www.youtube.com/@AnnaDuyenAn" target="_blank"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-full text-sm
                 hover:bg-red-600 transition-colors shadow-lg shadow-red-900/50">
