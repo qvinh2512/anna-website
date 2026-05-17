@@ -1,4 +1,30 @@
+'use client'
+import { useState } from 'react'
+
+const DREAM_CONTENT = {
+  violin: {
+    title: '🎻 Violin — Đam mê từ tiếng đàn đầu tiên',
+    body: 'Anna bắt đầu học violin từ nhỏ và hiện là học sinh năm nhất ngành Violin hệ Trung cấp 9 năm tại Nhạc viện Thành phố Hồ Chí Minh. Mỗi ngày luyện tập là một hành trình khám phá âm nhạc — từ các bài etude cơ bản đến những buổi Masterclass với các Giáo sư quốc tế. Anna đã tham gia nhiều buổi hòa tấu, biểu diễn tại các sân khấu lớn như Dalat Opera House. Ước mơ lớn nhất của Anna là trở thành nghệ sỹ violin chuyên nghiệp.',
+  },
+  'hoi-hoa': {
+    title: '🎨 Hội họa — Thế giới màu sắc của Anna',
+    body: 'Bên cạnh âm nhạc, hội họa là người bạn đồng hành thứ hai của Anna. Anna yêu thích vẽ tranh sơn dầu — từ tĩnh vật đến phong cảnh. Năm 2024, Anna cùng bạn Nguyên Khoa tổ chức triển lãm tranh từ thiện "Tết Yêu Thương, Xuân Chia Sẻ" tại M&M Workshop, Thủ Đức — bán tranh gây quỹ giúp các em nhỏ bệnh hiểm nghèo.',
+  },
+  'que-sera': {
+    title: '🦷 Que sera sera — Ước mơ Bác sỹ Nha khoa',
+    body: '"Que sera sera — whatever will be, will be." Anna có ước mơ thứ hai song song với âm nhạc: trở thành Bác sỹ Nha khoa. Anna tin rằng có thể vừa là nghệ sỹ violin vừa là bác sỹ — vì cả hai đều cần sự tỉ mỉ, kiên nhẫn và trái tim yêu thương con người.',
+  },
+}
+
 export default function HomePage() {
+  const [activeDream, setActiveDream] = useState<string | null>(null)
+
+  const toggleDream = (key: string) => {
+    setActiveDream(prev => prev === key ? null : key)
+  }
+
+  const dream = activeDream ? DREAM_CONTENT[activeDream as keyof typeof DREAM_CONTENT] : null
+
   return (
     <div>
       {/* HERO */}
@@ -16,21 +42,39 @@ export default function HomePage() {
             <p>🎻 Năm nhất Trung cấp Violin 9 năm · <strong className="text-white">Nhạc viện TP. HCM</strong></p>
           </div>
 
-          {/* Tags 3D */}
-          <div className="flex flex-wrap gap-3 mb-10">
+          {/* Tags 3D — nhấp vào xem giới thiệu */}
+          <div className="flex flex-wrap gap-3 mb-4">
             {[
-              {label:'🎻 Violin',     color:'from-rose-500 to-rose-700'},
-              {label:'🎨 Hội họa',   color:'from-amber-500 to-amber-700'},
-              {label:'🦷 Que sera sera', color:'from-purple-500 to-purple-700'},
+              {label:'🎻 Violin',        key:'violin',    color:'from-rose-500 to-rose-700'},
+              {label:'🎨 Hội họa',      key:'hoi-hoa',   color:'from-amber-500 to-amber-700'},
+              {label:'🦷 Que sera sera', key:'que-sera',  color:'from-purple-500 to-purple-700'},
             ].map(t=>(
-              <span key={t.label}
+              <button
+                key={t.key}
+                onClick={() => toggleDream(t.key)}
                 className={`text-xs px-4 py-2 bg-gradient-to-br ${t.color} text-white rounded-xl font-medium
                   shadow-lg shadow-black/30 border border-white/20
-                  transform hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-default`}>
+                  transform hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-pointer
+                  ${activeDream === t.key ? 'ring-2 ring-white/60 scale-105' : ''}`}>
                 {t.label}
-              </span>
+              </button>
             ))}
           </div>
+
+          {/* Dream detail panel */}
+          {dream && (
+            <div className="mb-6 bg-white/10 backdrop-blur rounded-xl p-5 border border-white/20 relative">
+              <button
+                onClick={() => setActiveDream(null)}
+                className="absolute top-3 right-3 text-white/50 hover:text-white text-lg leading-none">
+                ×
+              </button>
+              <h3 className="text-white font-semibold mb-2 text-sm" style={{fontFamily:"'Playfair Display',serif"}}>
+                {dream.title}
+              </h3>
+              <p className="text-white/70 text-xs leading-relaxed">{dream.body}</p>
+            </div>
+          )}
 
           <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-8">
             {[['4+','Năm violin'],['64','Tranh triển lãm'],['6+','Masterclass']].map(([n,l])=>(
@@ -75,7 +119,6 @@ export default function HomePage() {
                   transform hover:-translate-y-2 hover:scale-105
                   transition-all duration-300 cursor-pointer
                   border border-white/20`}>
-                {/* Shine effect */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
                 <span className="text-4xl block mb-3 drop-shadow-md">{cat.icon}</span>
                 <span className="font-semibold text-sm block mb-1 drop-shadow">{cat.label}</span>
@@ -94,19 +137,21 @@ export default function HomePage() {
               <p className="text-amber-600 text-xs tracking-widest uppercase mb-2">Học hỏi từ đỉnh cao</p>
               <h2 className="text-3xl" style={{fontFamily:"'Playfair Display',serif"}}>Các lớp <em>Masterclass</em></h2>
             </div>
-            <a href="/am-nhac" className="text-sm text-rose-500 hover:underline">Xem tất cả →</a>
+            <div className="flex items-center gap-4">
+              <a href="/am-nhac" className="text-sm text-rose-500 hover:underline">Xem tất cả →</a>
+              <a href="/admin/masterclass" className="text-sm px-3 py-1.5 border border-gray-200 rounded-full text-gray-500 hover:bg-gray-50 transition-colors">
+                ✏️ Chỉnh sửa
+              </a>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              {date:'18.03.2025', prof:'Prof. Felix Schwartz',    event:'Masterclass violin quốc tế',        piece:'Küchler Concertino',           color:'border-rose-200 bg-rose-50'},
-              {date:'26.03.2025', prof:'Prof. Addison',           event:'Masterclass tại TP.HCM',            piece:'Kỹ thuật ngón tay & âm sắc',   color:'border-amber-200 bg-amber-50'},
-              {date:'2024',       prof:'Giáo sư thỉnh giảng (Pháp)', event:'Masterclass nghệ thuật',         piece:'Certificate of Participation',  color:'border-emerald-200 bg-emerald-50'},
+              {date:'18.03.2025', prof:'Prof. Felix Schwartz',       event:'Masterclass violin quốc tế',   piece:'Küchler Concertino',          color:'border-rose-200 bg-rose-50'},
+              {date:'26.03.2025', prof:'Prof. Addison',              event:'Masterclass tại TP.HCM',       piece:'Kỹ thuật ngón tay & âm sắc',  color:'border-amber-200 bg-amber-50'},
+              {date:'2024',       prof:'Giáo sư thỉnh giảng (Pháp)', event:'Masterclass nghệ thuật',       piece:'Certificate of Participation', color:'border-emerald-200 bg-emerald-50'},
             ].map(m=>(
               <div key={m.prof}
-                className={`border-2 ${m.color} rounded-2xl p-5
-                  shadow-md hover:shadow-xl
-                  transform hover:-translate-y-1
-                  transition-all duration-300`}>
+                className={`border-2 ${m.color} rounded-2xl p-5 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300`}>
                 <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{m.date}</p>
                 <h3 className="font-semibold text-gray-900 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{m.prof}</h3>
                 <p className="text-xs text-gray-500 mb-3">{m.event}</p>
