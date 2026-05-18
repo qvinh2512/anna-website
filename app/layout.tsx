@@ -14,7 +14,9 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+const { data: profile } = user ? await supabase
+  .from('profiles').select('full_name,role')
+  .eq('id', user.id).single() : { data: null }  const { data: { user } } = await supabase.auth.getUser()
 
   return (
     <html lang="vi">
@@ -40,15 +42,23 @@ export default async function RootLayout({
                 {label}
               </a>
             ))}
-            {user ? (
-              <a href="/admin" className="ml-2 px-4 py-1.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition-colors">
-                ⚙️ Quản lý
-              </a>
-            ) : (
-              <a href="/dang-nhap" className="ml-2 px-4 py-1.5 border border-rose-300 text-rose-500 rounded-full hover:bg-rose-50 transition-colors">
-                Đăng nhập
-              </a>
-            )}
+ {user ? (
+  <div className="flex items-center gap-2 ml-2">
+    <div className="text-right">
+      <p className="text-xs text-gray-500 leading-none">Xin chào</p>
+      <p className="text-xs font-semibold text-gray-700 leading-none mt-0.5">
+        {profile?.full_name || user.email?.split('@')[0]}
+      </p>
+    </div>
+    <a href="/admin" className="px-4 py-1.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 text-sm">
+      ⚙️ Quản lý
+    </a>
+  </div>
+) : (
+  <a href="/dang-nhap" className="ml-2 px-4 py-1.5 border border-rose-300 text-rose-500 rounded-full text-sm hover:bg-rose-50">
+    Đăng nhập
+  </a>
+)}
           </div>
         </nav>
         <main className="flex-1 pt-16">{children}</main>
