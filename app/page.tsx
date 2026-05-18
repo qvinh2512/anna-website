@@ -96,7 +96,7 @@ export default function HomePage() {
             {/* Stradivarius Violin SVG */}
 <div className="flex justify-center mb-8">
   <img 
-    src="/violin.jpg" 
+    src="/violin.png" 
     alt="Violin" 
     className="w-64 h-auto object-contain drop-shadow-2xl rounded-lg"
     style={{filter:'drop-shadow(0 20px 60px rgba(0,0,0,0.8))'}}
