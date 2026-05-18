@@ -101,8 +101,7 @@ export default function HomePage() {
     className="w-64 h-auto object-contain drop-shadow-2xl rounded-lg"
     style={{filter:'drop-shadow(0 20px 60px rgba(0,0,0,0.8))'}}
   />
-</div>            </div>
-            <p className="text-white/30 text-xs italic mb-4">Stradivarius · 1715</p>
+</div>            <p className="text-white/30 text-xs italic mb-4">Stradivarius · 1715</p>
             <a href="https://www.youtube.com/@AnnaDuyenAn" target="_blank"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-500 text-white rounded-full text-sm
                 hover:bg-red-600 transition-colors shadow-lg shadow-red-900/50">
