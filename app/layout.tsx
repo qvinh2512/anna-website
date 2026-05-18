@@ -14,9 +14,10 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const supabase = createClient()
-const { data: profile } = user ? await supabase
-  .from('profiles').select('full_name,role')
-  .eq('id', user.id).single() : { data: null }  const { data: { user } } = await supabase.auth.getUser()
+const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = user ? await supabase
+    .from('profiles').select('full_name,role')
+    .eq('id', user.id).single() : { data: null }
 
   return (
     <html lang="vi">
@@ -50,9 +51,11 @@ const { data: profile } = user ? await supabase
         {profile?.full_name || user.email?.split('@')[0]}
       </p>
     </div>
-    <a href="/admin" className="px-4 py-1.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 text-sm">
-      ⚙️ Quản lý
-    </a>
+ {(profile?.role === 'anna' || profile?.role === 'admin') && (
+      <a href="/admin" className="px-4 py-1.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 text-sm">
+        ⚙️ Quản lý
+      </a>
+    )}
   </div>
 ) : (
   <a href="/dang-nhap" className="ml-2 px-4 py-1.5 border border-rose-300 text-rose-500 rounded-full text-sm hover:bg-rose-50">
