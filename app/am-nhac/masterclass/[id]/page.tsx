@@ -60,16 +60,19 @@ export default function MasterclassDetailPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
+
       {/* Back */}
-      <button onClick={() => router.back()}
-        className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-sm mb-8 transition-colors">
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-sm mb-8 transition-colors"
+      >
         ← Quay lại
       </button>
 
       {/* Header */}
       <div className={`bg-gradient-to-br ${gradient} rounded-3xl p-8 text-white mb-8`}>
         <p className="text-white/70 text-xs uppercase tracking-widest mb-3">🎻 Masterclass</p>
-        <h1 className="text-3xl font-bold mb-2" style={{fontFamily:"'Playfair Display',serif"}}>
+        <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Playfair Display',serif" }}>
           {mc.professor}
         </h1>
         <p className="text-white/80 text-sm mb-1">{mc.event}</p>
@@ -84,11 +87,13 @@ export default function MasterclassDetailPage() {
       {/* Video YouTube */}
       {ytId && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{fontFamily:"'Playfair Display',serif"}}>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{ fontFamily: "'Playfair Display',serif" }}>
             🎬 Video
           </h2>
-          <div className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-black"
-            style={{paddingTop:'56.25%'}}>
+          <div
+            className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-black"
+            style={{ paddingTop: '56.25%' }}
+          >
             <iframe
               className="absolute inset-0 w-full h-full"
               src={`https://www.youtube.com/embed/${ytId}?rel=0`}
@@ -103,36 +108,53 @@ export default function MasterclassDetailPage() {
       {/* Giới thiệu giáo sư */}
       {mc.professor_bio && (
         <div className="mb-8 bg-gray-50 rounded-2xl p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{ fontFamily: "'Playfair Display',serif" }}>
             👨‍🏫 Giới thiệu Giáo sư
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{mc.professor_bio}</p>
         </div>
       )}
 
-      {/* Ý nghĩa / Cảm nhận */}
+      {/* Cảm nhận của Anna */}
       {mc.significance && (
         <div className="mb-8 bg-rose-50 rounded-2xl p-6 border border-rose-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{ fontFamily: "'Playfair Display',serif" }}>
             💭 Cảm nhận của Anna
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{mc.significance}</p>
         </div>
       )}
 
-     {/* Hình ảnh */}
+      {/* Hình ảnh */}
       {mc.images && mc.images.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{fontFamily:"'Playfair Display',serif"}}>
+          <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{ fontFamily: "'Playfair Display',serif" }}>
             📸 Hình ảnh
           </h2>
           <div className="grid grid-cols-2 gap-3">
             {mc.images.map((img, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                <img src={img} alt={`Ảnh ${i+1}`}
-                  className="w-full h-auto object-contain" />
+              <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-50">
+                <img
+                  src={img}
+                  alt={`Ảnh ${i + 1}`}
+                  className="w-full h-auto object-contain"
+                />
               </div>
             ))}
           </div>
         </div>
       )}
+
+      {/* Footer */}
+      <div className="border-t border-gray-100 pt-6 text-center">
+        
+          href="/am-nhac"
+          className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 text-sm transition-colors"
+        >
+          ← Xem tất cả Masterclass
+        </a>
+      </div>
+
+    </div>
+  )
+}
