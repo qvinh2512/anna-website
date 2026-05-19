@@ -114,47 +114,4 @@ export default function MasterclassDetailPage() {
           <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{ fontFamily: "'Playfair Display',serif" }}>
             👨‍🏫 Giới thiệu Giáo sư
           </h2>
-          <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{mc.professor_bio}</p>
-        </div>
-      )}
-
-      {mc.significance && (
-        <div className="mb-8 bg-rose-50 rounded-2xl p-6 border border-rose-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{ fontFamily: "'Playfair Display',serif" }}>
-            💭 Cảm nhận của Anna
-          </h2>
-          <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{mc.significance}</p>
-        </div>
-      )}
-
-      {mc.images && mc.images.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{ fontFamily: "'Playfair Display',serif" }}>
-            📸 Hình ảnh
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {mc.images.map((img, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-50">
-                <img
-                  src={img}
-                  alt={`Ảnh ${i + 1}`}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="border-t border-gray-100 pt-6 text-center">
-        
-          href="/am-nhac"
-          className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 text-sm transition-colors"
-        >
-          ← Xem tất cả Masterclass
-        </a>
-      </div>
-
-    </div>
-  )
-}
+          <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{mc.professor_bio}
