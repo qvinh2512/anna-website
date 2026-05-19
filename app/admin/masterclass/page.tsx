@@ -1,60 +1,105 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createClient } from '../../../lib/supabase/client'
 
-type Card = {
-  id: number
+type Masterclass = {
+  id: string
   date: string
-  prof: string
+  professor: string
   event: string
   piece: string
-  color: 'rose' | 'amber' | 'emerald'
+  color: string
+  professor_bio: string
+  significance: string
+  youtube_url: string
+  images: string[]
 }
 
-const COLOR_STYLES = {
-  rose:    'border-rose-200 bg-rose-50',
-  amber:   'border-amber-200 bg-amber-50',
-  emerald: 'border-emerald-200 bg-emerald-50',
+const empty: Omit<Masterclass, 'id'> = {
+  date: '', professor: '', event: '', piece: '',
+  color: 'rose', professor_bio: '', significance: '',
+  youtube_url: '', images: []
 }
 
-const INITIAL: Card[] = [
-  { id: 1, date: '18.03.2025', prof: 'Prof. Felix Schwartz',       event: 'Masterclass violin quốc tế', piece: 'Küchler Concertino',          color: 'rose'    },
-  { id: 2, date: '26.03.2025', prof: 'Prof. Addison',              event: 'Masterclass tại TP.HCM',     piece: 'Kỹ thuật ngón tay & âm sắc', color: 'amber'   },
-  { id: 3, date: '2024',       prof: 'Giáo sư thỉnh giảng (Pháp)', event: 'Masterclass nghệ thuật',     piece: 'Certificate of Participation', color: 'emerald' },
+const colors = [
+  { value: 'rose',    label: '🌸 Hồng' },
+  { value: 'amber',   label: '🌼 Vàng' },
+  { value: 'emerald', label: '🌿 Xanh lá' },
+  { value: 'blue',    label: '💙 Xanh dương' },
+  { value: 'purple',  label: '💜 Tím' },
 ]
 
 export default function AdminMasterclassPage() {
-  const [cards, setCards] = useState<Card[]>(INITIAL)
-  const [editing, setEditing] = useState<Card | null>(null)
-  const [isNew, setIsNew] = useState(false)
+  const supabase = createClient()
+  const [list, setList] = useState<Masterclass[]>([])
+  const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState<Masterclass | null>(null)
+  const [form, setForm] = useState(empty)
+  const [saving, setSaving] = useState(false)
+  const [imageInput, setImageInput] = useState('')
+
+  const load = () => {
+    supabase.from('masterclasses').select('*').order('created_at', { ascending: false })
+      .then(({ data }) => { if (data) setList(data as Masterclass[]); setLoading(false) })
+  }
+
+  useEffect(() => { load() }, [])
 
   const openNew = () => {
-    setEditing({ id: Date.now(), date: '', prof: '', event: '', piece: '', color: 'rose' })
-    setIsNew(true)
+    setEditing({ id: '', ...empty })
+    setForm(empty)
+    setImageInput('')
   }
 
-  const openEdit = (c: Card) => {
-    setEditing({ ...c })
-    setIsNew(false)
+  const openEdit = (mc: Masterclass) => {
+    setEditing(mc)
+    setForm({ ...mc })
+    setImageInput('')
   }
 
-  const save = () => {
-    if (!editing) return
-    if (isNew) setCards(prev => [...prev, editing])
-    else setCards(prev => prev.map(c => c.id === editing.id ? editing : c))
-    setEditing(null)
+  const closeModal = () => { setEditing(null); setForm(empty) }
+
+  const save = async () => {
+    setSaving(true)
+    if (editing?.id) {
+      await supabase.from('masterclasses').update(form).eq('id', editing.id)
+    } else {
+      await supabase.from('masterclasses').insert(form)
+    }
+    setSaving(false)
+    closeModal()
+    load()
   }
 
-  const remove = (id: number) => {
-    if (confirm('Xoá Masterclass này?')) setCards(prev => prev.filter(c => c.id !== id))
+  const del = async (id: string) => {
+    if (!confirm('Xoá masterclass này?')) return
+    await supabase.from('masterclasses').delete().eq('id', id)
+    load()
+  }
+
+  const addImage = () => {
+    if (!imageInput.trim()) return
+    setForm(f => ({ ...f, images: [...(f.images || []), imageInput.trim()] }))
+    setImageInput('')
+  }
+
+  const removeImage = (i: number) => {
+    setForm(f => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }))
+  }
+
+  const colorMap: Record<string, string> = {
+    rose: 'border-rose-200 bg-rose-50',
+    amber: 'border-amber-200 bg-amber-50',
+    emerald: 'border-emerald-200 bg-emerald-50',
+    blue: 'border-blue-200 bg-blue-50',
+    purple: 'border-purple-200 bg-purple-50',
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold" style={{fontFamily:"'Playfair Display',serif"}}>
-            Masterclass
-          </h1>
+          <h1 className="text-2xl font-semibold" style={{fontFamily:"'Playfair Display',serif"}}>Masterclass</h1>
           <p className="text-gray-400 text-sm mt-1">Quản lý các lớp học với Giáo sư violin</p>
         </div>
         <button onClick={openNew}
@@ -63,80 +108,146 @@ export default function AdminMasterclassPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {cards.map(c => (
-          <div key={c.id} className={`border-2 ${COLOR_STYLES[c.color]} rounded-2xl p-5 relative`}>
-            <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{c.date}</p>
-            <h3 className="font-semibold text-gray-900 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{c.prof}</h3>
-            <p className="text-xs text-gray-500 mb-3">{c.event}</p>
-            <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-700 italic border border-gray-100 mb-4">
-              🎵 {c.piece}
+      {loading ? (
+        <p className="text-gray-400 text-sm">Đang tải...</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {list.map(mc => (
+            <div key={mc.id}
+              className={`border-2 ${colorMap[mc.color] || colorMap.rose} rounded-2xl p-5 shadow-sm`}>
+              <p className="text-xs text-gray-400 mb-1">{mc.date}</p>
+              <h3 className="font-semibold text-gray-800 mb-1 text-sm" style={{fontFamily:"'Playfair Display',serif"}}>
+                {mc.professor}
+              </h3>
+              <p className="text-xs text-gray-500 mb-3">{mc.event}</p>
+              {mc.piece && (
+                <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-600 italic border mb-3">
+                  🎵 {mc.piece}
+                </div>
+              )}
+              {mc.youtube_url && (
+                <p className="text-xs text-rose-400 mb-3">▶ Có video YouTube</p>
+              )}
+              <div className="flex gap-2 flex-wrap">
+                <a href={`/am-nhac/masterclass/${mc.id}`} target="_blank"
+                  className="text-xs px-3 py-1.5 border border-gray-200 rounded-full text-gray-500 hover:bg-gray-50">
+                  👁 Xem
+                </a>
+                <button onClick={() => openEdit(mc)}
+                  className="text-xs px-3 py-1.5 border border-amber-200 rounded-full text-amber-600 hover:bg-amber-50">
+                  ✏️ Sửa
+                </button>
+                <button onClick={() => del(mc.id)}
+                  className="text-xs px-3 py-1.5 border border-red-200 rounded-full text-red-500 hover:bg-red-50">
+                  🗑 Xoá
+                </button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => openEdit(c)}
-                className="flex-1 py-1.5 text-xs border border-gray-200 rounded-full hover:bg-white transition-colors">
-                ✏️ Sửa
-              </button>
-              <button onClick={() => remove(c.id)}
-                className="flex-1 py-1.5 text-xs border border-red-200 text-red-500 rounded-full hover:bg-red-50 transition-colors">
-                🗑 Xoá
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* MODAL */}
-      {editing && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <h2 className="text-lg font-semibold mb-4" style={{fontFamily:"'Playfair Display',serif"}}>
-              {isNew ? 'Thêm Masterclass mới' : 'Chỉnh sửa Masterclass'}
-            </h2>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Ngày (VD: 18.03.2025)</label>
-                <input type="text" value={editing.date}
-                  onChange={e => setEditing(v => v && ({...v, date: e.target.value}))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-rose-300" />
+      {/* Modal */}
+      {editing !== null && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-2xl my-8 shadow-2xl">
+            <div className="p-6 border-b">
+              <h2 className="text-xl font-semibold" style={{fontFamily:"'Playfair Display',serif"}}>
+                {editing.id ? 'Chỉnh sửa Masterclass' : 'Thêm Masterclass mới'}
+              </h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Ngày (VD: 18.03.2025)</label>
+                  <input value={form.date} onChange={e => setForm(f => ({...f, date: e.target.value}))}
+                    className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Màu thẻ</label>
+                  <select value={form.color} onChange={e => setForm(f => ({...f, color: e.target.value}))}
+                    className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300 bg-white">
+                    {colors.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  </select>
+                </div>
               </div>
+
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Giáo sư / Tên sự kiện</label>
-                <input type="text" value={editing.prof}
-                  onChange={e => setEditing(v => v && ({...v, prof: e.target.value}))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-rose-300" />
+                <label className="block text-xs text-gray-500 mb-1">Tên Giáo sư / Tiêu đề</label>
+                <input value={form.professor} onChange={e => setForm(f => ({...f, professor: e.target.value}))}
+                  className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300"
+                  placeholder="Prof. Felix Schwartz" />
               </div>
+
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Mô tả ngắn</label>
-                <input type="text" value={editing.event}
-                  onChange={e => setEditing(v => v && ({...v, event: e.target.value}))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-rose-300" />
+                <label className="block text-xs text-gray-500 mb-1">Mô tả sự kiện</label>
+                <input value={form.event} onChange={e => setForm(f => ({...f, event: e.target.value}))}
+                  className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300"
+                  placeholder="Masterclass violin quốc tế" />
               </div>
+
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Bài học / Nội dung</label>
-                <input type="text" value={editing.piece}
-                  onChange={e => setEditing(v => v && ({...v, piece: e.target.value}))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-rose-300" />
+                <label className="block text-xs text-gray-500 mb-1">Bài học / Tác phẩm</label>
+                <input value={form.piece} onChange={e => setForm(f => ({...f, piece: e.target.value}))}
+                  className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300"
+                  placeholder="Küchler Concertino Op.15" />
               </div>
+
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Màu thẻ</label>
-                <select value={editing.color}
-                  onChange={e => setEditing(v => v && ({...v, color: e.target.value as Card['color']}))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-rose-300">
-                  <option value="rose">🌸 Hồng</option>
-                  <option value="amber">🌼 Vàng</option>
-                  <option value="emerald">🌿 Xanh lá</option>
-                </select>
+                <label className="block text-xs text-gray-500 mb-1">Link YouTube (video buổi học)</label>
+                <input value={form.youtube_url} onChange={e => setForm(f => ({...f, youtube_url: e.target.value}))}
+                  className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300"
+                  placeholder="https://youtube.com/watch?v=..." />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Giới thiệu Giáo sư</label>
+                <textarea value={form.professor_bio} onChange={e => setForm(f => ({...f, professor_bio: e.target.value}))}
+                  rows={3}
+                  className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300 resize-none"
+                  placeholder="Giáo sư violin người Pháp, từng biểu diễn tại Carnegie Hall..." />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Cảm nhận của Anna</label>
+                <textarea value={form.significance} onChange={e => setForm(f => ({...f, significance: e.target.value}))}
+                  rows={4}
+                  className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300 resize-none"
+                  placeholder="Buổi học hôm nay thật ý nghĩa với mình vì..." />
+              </div>
+
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Hình ảnh (URL)</label>
+                <div className="flex gap-2 mb-2">
+                  <input value={imageInput} onChange={e => setImageInput(e.target.value)}
+                    className="flex-1 px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300"
+                    placeholder="https://..." onKeyDown={e => e.key === 'Enter' && addImage()} />
+                  <button onClick={addImage}
+                    className="px-4 py-2 bg-rose-500 text-white rounded-xl text-sm hover:bg-rose-600">
+                    + Thêm
+                  </button>
+                </div>
+                {form.images && form.images.length > 0 && (
+                  <div className="space-y-1">
+                    {form.images.map((img, i) => (
+                      <div key={i} className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5">
+                        <span className="flex-1 text-xs text-gray-500 truncate">{img}</span>
+                        <button onClick={() => removeImage(i)} className="text-red-400 hover:text-red-600 text-xs">✕</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="flex gap-3 mt-5">
-              <button onClick={() => setEditing(null)}
-                className="flex-1 py-2 border border-gray-200 rounded-full text-sm hover:bg-gray-50 transition-colors">
+
+            <div className="p-6 border-t flex gap-3">
+              <button onClick={closeModal}
+                className="flex-1 py-2.5 border border-gray-200 rounded-full text-sm text-gray-500 hover:bg-gray-50">
                 Huỷ
               </button>
-              <button onClick={save}
-                className="flex-1 py-2 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 transition-colors">
-                Lưu
+              <button onClick={save} disabled={saving}
+                className="flex-1 py-2.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 disabled:opacity-50">
+                {saving ? 'Đang lưu...' : 'Lưu'}
               </button>
             </div>
           </div>
