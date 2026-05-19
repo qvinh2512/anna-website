@@ -100,13 +100,13 @@ export default function MasterclassDetailPage() {
       {mc.images && mc.images.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">📸 Hình ảnh</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {mc.images.map((img, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-50">
-                <img src={img} alt={`Ảnh ${i+1}`} className="w-full h-auto object-contain mx-auto block" />
-              </div>
-            ))}
-          </div>
+          <div className="columns-2 gap-3 space-y-3">
+  {mc.images.map((img, i) => (
+    <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-50 break-inside-avoid">
+      <img src={img} alt={`Ảnh ${i+1}`} className="w-full h-auto object-contain mx-auto block" />
+    </div>
+  ))}
+</div>
         </div>
       )}
       <div className="border-t border-gray-100 pt-6 text-center">
