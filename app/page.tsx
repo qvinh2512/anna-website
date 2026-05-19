@@ -10,6 +10,7 @@ type Masterclass = {
   event: string
   piece: string
   color: string
+  event_date: string
 }
 
 const colorMap: Record<string, string> = {
@@ -24,14 +25,13 @@ export default function HomePage() {
   const supabase = createClient()
   const [activeDream, setActiveDream] = useState<string | null>(null)
   const [dreamContent, setDreamContent] = useState<Record<string, DreamContent>>({
-    violin:     { title: '🎻 Violin – Đam mê từ tiếng đàn', body: '' },
-    'hoi-hoa':  { title: '🎨 Hội họa – Thế giới màu sắc', body: '' },
-    'que-sera': { title: '🦷 Que sera sera – Ước mơ Bác sỹ Nha khoa', body: '' },
+    violin:     { title: '🎻 Violin — Đam mê từ tiếng đàn đầu tiên', body: '' },
+    'hoi-hoa':  { title: '🎨 Hội họa — Thế giới màu sắc của Anna', body: '' },
+    'que-sera': { title: '🦷 Que sera sera — Ước mơ Bác sỹ Nha khoa', body: '' },
   })
   const [masterclasses, setMasterclasses] = useState<Masterclass[]>([])
 
   useEffect(() => {
-    // Load dream content
     supabase.from('site_content').select('key,title,body').in('key', ['violin','hoi-hoa','que-sera'])
       .then(({ data }) => {
         if (data) {
@@ -41,9 +41,9 @@ export default function HomePage() {
         }
       })
 
-    // Load masterclasses từ database
-    supabase.from('masterclasses').select('id,date,professor,event,piece,color')
-      .order('created_at', { ascending: false })
+    supabase.from('masterclasses')
+      .select('id,date,professor,event,piece,color,event_date')
+      .order('event_date', { ascending: false })
       .limit(3)
       .then(({ data }) => { if (data) setMasterclasses(data as Masterclass[]) })
   }, [])
@@ -58,10 +58,9 @@ export default function HomePage() {
     <div>
       {/* HERO */}
       <section className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-        {/* Cột trái */}
         <div className="bg-gray-900 flex flex-col justify-center px-6 sm:px-10 lg:px-12 py-16 lg:py-24">
           <p className="text-rose-400 text-xs tracking-widest uppercase mb-4 lg:mb-6">
-            Nhật Ký · Âm nhạc · Nghệ thuật
+            Nhật ký · Âm nhạc · Nghệ thuật
           </p>
 
           <h1 className="text-4xl sm:text-5xl lg:text-7xl text-white mb-6 lg:mb-8 leading-tight"
@@ -75,16 +74,13 @@ export default function HomePage() {
             <p>🎻 Năm nhất Trung cấp Violin 9 năm · <strong className="text-white">Nhạc viện TP. HCM</strong></p>
           </div>
 
-          {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-4 lg:mb-6">
             {[
               {label:'🎻 Violin',        key:'violin',    color:'from-rose-500 to-rose-700'},
               {label:'🎨 Hội họa',       key:'hoi-hoa',   color:'from-amber-500 to-amber-700'},
               {label:'🦷 Que sera sera', key:'que-sera',  color:'from-purple-500 to-purple-700'},
             ].map(t=>(
-              <button
-                key={t.key}
-                onClick={() => toggleDream(t.key)}
+              <button key={t.key} onClick={() => toggleDream(t.key)}
                 className={`text-xs px-4 py-2 bg-gradient-to-br ${t.color} text-white rounded-xl font-medium
                   shadow-lg shadow-black/30 border border-white/20
                   transform hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-pointer
@@ -94,14 +90,10 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Dream detail panel */}
           {dream && (
             <div className="mb-6 bg-white/10 backdrop-blur rounded-xl p-4 border border-white/20 relative">
-              <button
-                onClick={() => setActiveDream(null)}
-                className="absolute top-3 right-3 text-white/50 hover:text-white text-lg leading-none">
-                ×
-              </button>
+              <button onClick={() => setActiveDream(null)}
+                className="absolute top-3 right-3 text-white/50 hover:text-white text-lg leading-none">×</button>
               <h3 className="text-white font-semibold mb-2 text-sm" style={{fontFamily:"'Playfair Display',serif"}}>
                 {dream.title}
               </h3>
@@ -119,16 +111,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Cột phải */}
         <div className="bg-gray-800 flex items-center justify-center py-10 lg:py-16 px-6 lg:px-8">
           <div className="text-center">
             <div className="flex justify-center mb-6 lg:mb-8">
-              <img
-                src="/violin.png"
-                alt="Violin"
+              <img src="/violin.png" alt="Violin"
                 className="w-48 sm:w-56 lg:w-64 h-auto object-contain drop-shadow-2xl rounded-lg"
-                style={{filter:'drop-shadow(0 20px 60px rgba(0,0,0,0.8))'}}
-              />
+                style={{filter:'drop-shadow(0 20px 60px rgba(0,0,0,0.8))'}} />
             </div>
             <p className="text-white/30 text-xs italic mb-4">Stradivarius · 1715</p>
             <div className="flex gap-3 justify-center flex-wrap">
@@ -162,11 +150,8 @@ export default function HomePage() {
             ].map(cat=>(
               <a key={cat.href} href={cat.href}
                 className={`group relative bg-gradient-to-br ${cat.from} ${cat.to}
-                  rounded-2xl p-4 lg:p-5 text-center text-white
-                  shadow-lg hover:shadow-2xl
-                  transform hover:-translate-y-2 hover:scale-105
-                  transition-all duration-300 cursor-pointer
-                  border border-white/20`}>
+                  rounded-2xl p-4 lg:p-5 text-center text-white shadow-lg hover:shadow-2xl
+                  transform hover:-translate-y-2 hover:scale-105 transition-all duration-300 cursor-pointer border border-white/20`}>
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
                 <span className="text-3xl lg:text-4xl block mb-2 lg:mb-3 drop-shadow-md">{cat.icon}</span>
                 <span className="font-semibold text-xs lg:text-sm block mb-1 drop-shadow">{cat.label}</span>
@@ -177,7 +162,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* MASTERCLASS PREVIEW — từ database */}
+      {/* MASTERCLASS PREVIEW — từ database, sắp xếp theo ngày tổ chức */}
       <section className="py-12 lg:py-16 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-end justify-between mb-6 lg:mb-8">
@@ -200,14 +185,13 @@ export default function HomePage() {
                 <h3 className="font-semibold text-gray-900 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{m.professor}</h3>
                 <p className="text-xs text-gray-500 mb-3">{m.event}</p>
                 {m.piece && (
-                  <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-700 italic border border-gray-100">
+                  <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-700 italic border border-gray-100 mb-3">
                     🎵 {m.piece}
                   </div>
                 )}
-                <p className="text-xs text-rose-400 mt-3">Xem chi tiết →</p>
+                <p className="text-xs text-rose-400">Xem chi tiết →</p>
               </a>
             )) : (
-              // Skeleton loading
               [1,2,3].map(i => (
                 <div key={i} className="border-2 border-gray-100 bg-gray-50 rounded-2xl p-5 animate-pulse">
                   <div className="h-3 bg-gray-200 rounded w-20 mb-3" />
