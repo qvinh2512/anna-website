@@ -3,6 +3,22 @@ import { useState, useEffect } from 'react'
 import { createClient } from './lib/supabase/client'
 
 type DreamContent = { title: string; body: string }
+type Masterclass = {
+  id: string
+  date: string
+  professor: string
+  event: string
+  piece: string
+  color: string
+}
+
+const colorMap: Record<string, string> = {
+  rose:    'border-rose-200 bg-rose-50',
+  amber:   'border-amber-200 bg-amber-50',
+  emerald: 'border-emerald-200 bg-emerald-50',
+  blue:    'border-blue-200 bg-blue-50',
+  purple:  'border-purple-200 bg-purple-50',
+}
 
 export default function HomePage() {
   const supabase = createClient()
@@ -12,8 +28,10 @@ export default function HomePage() {
     'hoi-hoa':  { title: '🎨 Hội họa – Thế giới màu sắc', body: '' },
     'que-sera': { title: '🦷 Que sera sera – Ước mơ Bác sỹ Nha khoa', body: '' },
   })
+  const [masterclasses, setMasterclasses] = useState<Masterclass[]>([])
 
   useEffect(() => {
+    // Load dream content
     supabase.from('site_content').select('key,title,body').in('key', ['violin','hoi-hoa','que-sera'])
       .then(({ data }) => {
         if (data) {
@@ -22,6 +40,12 @@ export default function HomePage() {
           setDreamContent(map)
         }
       })
+
+    // Load masterclasses từ database
+    supabase.from('masterclasses').select('id,date,professor,event,piece,color')
+      .order('created_at', { ascending: false })
+      .limit(3)
+      .then(({ data }) => { if (data) setMasterclasses(data as Masterclass[]) })
   }, [])
 
   const toggleDream = (key: string) => {
@@ -153,7 +177,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* MASTERCLASS PREVIEW */}
+      {/* MASTERCLASS PREVIEW — từ database */}
       <section className="py-12 lg:py-16 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-end justify-between mb-6 lg:mb-8">
@@ -169,21 +193,30 @@ export default function HomePage() {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              {date:'18.03.2025', prof:'Prof. Felix Schwartz',        event:'Masterclass violin quốc tế',   piece:'Küchler Concertino',           color:'border-rose-200 bg-rose-50'},
-              {date:'26.03.2025', prof:'Prof. Addison',               event:'Masterclass tại TP.HCM',       piece:'Kỹ thuật ngón tay & âm sắc',   color:'border-amber-200 bg-amber-50'},
-              {date:'2024',       prof:'Giáo sư thỉnh giảng (Pháp)',  event:'Masterclass nghệ thuật',       piece:'Certificate of Participation', color:'border-emerald-200 bg-emerald-50'},
-            ].map(m=>(
-              <div key={m.prof}
-                className={`border-2 ${m.color} rounded-2xl p-5 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300`}>
+            {masterclasses.length > 0 ? masterclasses.map(m => (
+              <a key={m.id} href={`/am-nhac/masterclass/${m.id}`}
+                className={`border-2 ${colorMap[m.color] || colorMap.rose} rounded-2xl p-5 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 block`}>
                 <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{m.date}</p>
-                <h3 className="font-semibold text-gray-900 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{m.prof}</h3>
+                <h3 className="font-semibold text-gray-900 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{m.professor}</h3>
                 <p className="text-xs text-gray-500 mb-3">{m.event}</p>
-                <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-700 italic border border-gray-100">
-                  🎵 {m.piece}
+                {m.piece && (
+                  <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-700 italic border border-gray-100">
+                    🎵 {m.piece}
+                  </div>
+                )}
+                <p className="text-xs text-rose-400 mt-3">Xem chi tiết →</p>
+              </a>
+            )) : (
+              // Skeleton loading
+              [1,2,3].map(i => (
+                <div key={i} className="border-2 border-gray-100 bg-gray-50 rounded-2xl p-5 animate-pulse">
+                  <div className="h-3 bg-gray-200 rounded w-20 mb-3" />
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2 mb-4" />
+                  <div className="h-8 bg-gray-200 rounded" />
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
