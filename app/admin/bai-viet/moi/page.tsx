@@ -21,6 +21,23 @@ export default function NewPostPage() {
   const [tags, setTags]         = useState('')
   const [saving, setSaving]     = useState(false)
   const [done, setDone]         = useState(false)
+  const [images, setImages]     = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
+
+  const uploadImage = async (file: File) => {
+    setUploading(true)
+    const ext = file.name.split('.').pop()
+    const fileName = `posts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { error } = await supabase.storage.from('anna-images').upload(fileName, file)
+    if (error) { alert('Lỗi upload: ' + error.message); setUploading(false); return }
+    const { data } = supabase.storage.from('anna-images').getPublicUrl(fileName)
+    setImages(prev => [...prev, data.publicUrl])
+    setUploading(false)
+  }
+
+  const removeImage = (idx: number) => {
+    setImages(prev => prev.filter((_, i) => i !== idx))
+  }
 
   const save = async (status: 'draft' | 'published') => {
     if (!title.trim()) { alert('Nhập tiêu đề đi!'); return }
@@ -47,6 +64,7 @@ export default function NewPostPage() {
       excerpt:      excerpt.trim() || null,
       content:      content.trim() || null,
       youtube_url:  youtube.trim() || null,
+      images:       images.length > 0 ? images : null,
       tags:         tags.split(',').map(t=>t.trim()).filter(Boolean),
       status,
       published_at: status === 'published' ? new Date().toISOString() : null,
@@ -65,7 +83,7 @@ export default function NewPostPage() {
         <a href="/admin/bai-viet" className="px-5 py-2 border rounded-full text-sm hover:bg-gray-50">
           Xem danh sách bài
         </a>
-        <button onClick={()=>{setDone(false);setTitle('');setContent('');setExcerpt('')}}
+        <button onClick={()=>{setDone(false);setTitle('');setContent('');setExcerpt('');setImages([])}}
           className="px-5 py-2 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600">
           Viết bài mới
         </button>
@@ -80,6 +98,7 @@ export default function NewPostPage() {
       </h1>
 
       <div className="bg-white rounded-2xl border p-6 space-y-5">
+
         {/* Tiêu đề */}
         <div>
           <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">Tiêu đề *</label>
@@ -113,9 +132,40 @@ export default function NewPostPage() {
             className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300 resize-none leading-relaxed" />
         </div>
 
+        {/* Upload ảnh */}
+        <div>
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-2">📸 Hình ảnh</label>
+          <label className={`flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'border-gray-200 bg-gray-50' : 'border-rose-200 hover:border-rose-400 hover:bg-rose-50'}`}>
+            <input type="file" accept="image/*" multiple className="hidden"
+              disabled={uploading}
+              onChange={e => {
+                const files = Array.from(e.target.files || [])
+                files.forEach(f => uploadImage(f))
+                e.target.value = ''
+              }} />
+            {uploading
+              ? <span className="text-xs text-gray-400">⏳ Đang upload...</span>
+              : <span className="text-xs text-rose-400">📎 Chọn ảnh từ máy (có thể chọn nhiều)</span>
+            }
+          </label>
+          {images.length > 0 && (
+            <div className="grid grid-cols-3 gap-2 mt-3">
+              {images.map((url, i) => (
+                <div key={i} className="relative group rounded-xl overflow-hidden">
+                  <img src={url} alt={`Ảnh ${i+1}`} className="w-full h-24 object-cover" />
+                  <button onClick={() => removeImage(i)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* YouTube */}
         <div>
-          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">Link YouTube (nếu có)</label>
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">🎬 Link YouTube (nếu có)</label>
           <input type="url" value={youtube} onChange={e=>setYoutube(e.target.value)}
             placeholder="https://youtube.com/watch?v=..."
             className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
@@ -131,15 +181,16 @@ export default function NewPostPage() {
 
         {/* Buttons */}
         <div className="flex gap-3 pt-2">
-          <button onClick={()=>save('draft')} disabled={saving}
+          <button onClick={()=>save('draft')} disabled={saving||uploading}
             className="px-6 py-2.5 border border-gray-200 rounded-full text-sm hover:bg-gray-50 disabled:opacity-60 transition-colors">
             💾 Lưu nháp
           </button>
-          <button onClick={()=>save('published')} disabled={saving}
+          <button onClick={()=>save('published')} disabled={saving||uploading}
             className="px-6 py-2.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 disabled:opacity-60 transition-colors">
             🚀 {saving ? 'Đang đăng...' : 'Đăng bài'}
           </button>
         </div>
+
       </div>
     </div>
   )
