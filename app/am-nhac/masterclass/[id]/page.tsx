@@ -120,29 +120,19 @@ export default function MasterclassDetailPage() {
         </div>
       )}
 
-      {/* Hình ảnh */}
+     {/* Hình ảnh */}
       {mc.images && mc.images.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{fontFamily:"'Playfair Display',serif"}}>
             📸 Hình ảnh
           </h2>
           <div className="grid grid-cols-2 gap-3">
-  {mc.images.map((img, i) => (
-    <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-      <img src={img} alt={`Ảnh ${i+1}`}
-        className="w-full h-auto object-contain" />
-    </div>
-  ))}
-</div>
+            {mc.images.map((img, i) => (
+              <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                <img src={img} alt={`Ảnh ${i+1}`}
+                  className="w-full h-auto object-contain" />
+              </div>
+            ))}
+          </div>
+        </div>
       )}
-
-      {/* Footer */}
-      <div className="border-t border-gray-100 pt-6 text-center">
-        <a href="/am-nhac"
-          className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 text-sm transition-colors">
-          ← Xem tất cả Masterclass
-        </a>
-      </div>
-    </div>
-  )
-}
