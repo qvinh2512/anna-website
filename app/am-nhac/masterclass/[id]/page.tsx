@@ -127,12 +127,13 @@ export default function MasterclassDetailPage() {
             📸 Hình ảnh
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            {mc.images.map((img, i) => (
-              <img key={i} src={img} alt={`Ảnh ${i+1}`}
-                className="w-full h-48 object-cover rounded-xl shadow-md hover:shadow-xl transition-shadow" />
-            ))}
-          </div>
-        </div>
+  {mc.images.map((img, i) => (
+    <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+      <img src={img} alt={`Ảnh ${i+1}`}
+        className="w-full h-auto object-contain" />
+    </div>
+  ))}
+</div>
       )}
 
       {/* Footer */}
