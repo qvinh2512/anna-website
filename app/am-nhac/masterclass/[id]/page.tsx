@@ -103,7 +103,7 @@ export default function MasterclassDetailPage() {
           <div className="grid grid-cols-2 gap-3">
             {mc.images.map((img, i) => (
               <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-50">
-                <img src={img} alt={`Ảnh ${i+1}`} className="w-full h-auto object-contain" />
+                <img src={img} alt={`Ảnh ${i+1}`} className="w-full h-auto object-contain mx-auto block" />
               </div>
             ))}
           </div>
