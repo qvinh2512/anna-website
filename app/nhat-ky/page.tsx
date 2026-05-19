@@ -47,15 +47,25 @@ export default async function NhatKyPage() {
             <article key={post.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 
               {/* Hình ảnh */}
-              {post.images && post.images.length > 0 && (
-                <div className="columns-2 gap-2 p-4">
-                  {post.images.map((img: string, i: number) => (
-                    <div key={i} className="rounded-xl overflow-hidden mb-2 break-inside-avoid">
-                      <img src={img} alt={`Ảnh ${i+1}`} className="w-full h-auto object-contain" />
-                    </div>
-                  ))}
-                </div>
-              )}
+{post.images && post.images.length > 0 && (
+  <div className={`p-4 ${
+    post.images.length === 1
+      ? 'flex justify-center'
+      : 'grid grid-cols-2 gap-2 items-center'
+  }`}>
+    {post.images.map((img: string, i: number) => (
+      <div key={i} className={`rounded-xl overflow-hidden ${
+        post.images.length === 1 ? 'max-w-lg w-full' : ''
+      }`}>
+        <img
+          src={img}
+          alt={`Ảnh ${i+1}`}
+          className="w-full h-auto object-contain mx-auto block"
+        />
+      </div>
+    ))}
+  </div>
+)}
 
               <div className="p-6">
                 {/* Ngày */}
