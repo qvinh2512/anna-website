@@ -18,11 +18,11 @@ type Masterclass = {
 }
 
 const colorMap: Record<string, string> = {
-  rose:    'from-rose-400 to-rose-600',
-  amber:   'from-amber-400 to-amber-600',
+  rose: 'from-rose-400 to-rose-600',
+  amber: 'from-amber-400 to-amber-600',
   emerald: 'from-emerald-400 to-emerald-600',
-  blue:    'from-blue-400 to-blue-600',
-  purple:  'from-purple-400 to-purple-600',
+  blue: 'from-blue-400 to-blue-600',
+  purple: 'from-purple-400 to-purple-600',
 }
 
 function getYouTubeId(url: string) {
@@ -39,15 +39,8 @@ export default function MasterclassDetailPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase
-      .from('masterclasses')
-      .select('*')
-      .eq('id', params.id)
-      .single()
-      .then(({ data }) => {
-        setMc(data)
-        setLoading(false)
-      })
+    supabase.from('masterclasses').select('*').eq('id', params.id).single()
+      .then(({ data }) => { setMc(data); setLoading(false) })
   }, [params.id])
 
   if (loading) return (
@@ -67,19 +60,12 @@ export default function MasterclassDetailPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
-
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-sm mb-8 transition-colors"
-      >
+      <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-sm mb-8 transition-colors">
         ← Quay lại
       </button>
-
       <div className={`bg-gradient-to-br ${gradient} rounded-3xl p-8 text-white mb-8`}>
         <p className="text-white/70 text-xs uppercase tracking-widest mb-3">🎻 Masterclass</p>
-        <h1 className="text-3xl font-bold mb-2" style={{ fontFamily: "'Playfair Display',serif" }}>
-          {mc.professor}
-        </h1>
+        <h1 className="text-3xl font-bold mb-2">{mc.professor}</h1>
         <p className="text-white/80 text-sm mb-1">{mc.event}</p>
         <p className="text-white/60 text-xs">{mc.date}</p>
         {mc.piece && (
@@ -88,73 +74,38 @@ export default function MasterclassDetailPage() {
           </div>
         )}
       </div>
-
       {ytId && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{ fontFamily: "'Playfair Display',serif" }}>
-            🎬 Video
-          </h2>
-          <div
-            className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-black"
-            style={{ paddingTop: '56.25%' }}
-          >
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              src={`https://www.youtube.com/embed/${ytId}?rel=0`}
-              title={mc.professor}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">🎬 Video</h2>
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-xl bg-black" style={{paddingTop:'56.25%'}}>
+            <iframe className="absolute inset-0 w-full h-full" src={`https://www.youtube.com/embed/${ytId}?rel=0`} title={mc.professor} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
           </div>
         </div>
       )}
-
       {mc.professor_bio && (
         <div className="mb-8 bg-gray-50 rounded-2xl p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{ fontFamily: "'Playfair Display',serif" }}>
-            👨‍🏫 Giới thiệu Giáo sư
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">👨‍🏫 Giới thiệu Giáo sư</h2>
           <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{mc.professor_bio}</p>
         </div>
       )}
-
       {mc.significance && (
         <div className="mb-8 bg-rose-50 rounded-2xl p-6 border border-rose-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3" style={{ fontFamily: "'Playfair Display',serif" }}>
-            💭 Cảm nhận của Anna
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">💭 Cảm nhận của Anna</h2>
           <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{mc.significance}</p>
         </div>
       )}
-
       {mc.images && mc.images.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4" style={{ fontFamily: "'Playfair Display',serif" }}>
-            📸 Hình ảnh
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">📸 Hình ảnh</h2>
+          <div className={`p-1 ${mc.images.length === 1 ? 'flex justify-center' : 'grid grid-cols-2 gap-3 items-center'}`}>
             {mc.images.map((img, i) => (
-              <div key={i} className="rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-50">
-                <img
-                  src={img}
-                  alt={`Ảnh ${i + 1}`}
-                  className="w-full h-auto object-contain"
-                />
+              <div key={i} className={`rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow bg-gray-50 ${mc.images.length === 1 ? 'max-w-lg w-full' : ''}`}>
+                <img src={img} alt={`Ảnh ${i+1}`} className="w-full h-auto object-contain mx-auto block" />
               </div>
             ))}
           </div>
         </div>
       )}
-
       <div className="border-t border-gray-100 pt-6 text-center">
-        
-          href="/am-nhac"
-          className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 text-sm transition-colors"
-        >
-          ← Xem tất cả Masterclass
-        </a>
-      </div>
-
-    </div>
-  )
-}
+        <a href="/am-nhac" className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 text-sm transition-colors">
+          ← Xem
