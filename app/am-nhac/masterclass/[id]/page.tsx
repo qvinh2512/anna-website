@@ -108,4 +108,9 @@ export default function MasterclassDetailPage() {
       )}
       <div className="border-t border-gray-100 pt-6 text-center">
         <a href="/am-nhac" className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 text-sm transition-colors">
-          ← Xem
+          ← Xem tất cả Masterclass
+        </a>
+      </div>
+    </div>
+  )
+}
