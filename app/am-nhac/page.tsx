@@ -122,3 +122,59 @@ export default function AmNhacPage() {
                   {filtered.length === 0 && (
                     <p className="text-center text-gray-400 text-sm py-8">Chưa có video</p>
                   )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="text-center mt-8">
+            <p className="text-gray-400 text-sm mb-3">Xem thêm các video của Anna</p>
+            <a href="https://www.youtube.com/@AnnaDuyenAn" target="_blank"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg text-sm">
+              ▶ YouTube @AnnaDuyenAn
+            </a>
+          </div>
+        </section>
+
+        {/* MASTERCLASS */}
+        <section className="mb-14">
+          <div className="flex items-end justify-between mb-6">
+            <div>
+              <p className="text-amber-600 text-xs tracking-widest uppercase mb-2">Học hỏi từ đỉnh cao</p>
+              <h2 className="text-2xl" style={{fontFamily:"'Playfair Display',serif"}}>Các lớp <em>Masterclass</em></h2>
+            </div>
+            <div className="flex gap-2">
+              <a href="/admin/video" className="text-sm px-3 py-1.5 border border-gray-200 rounded-full text-gray-500 hover:bg-gray-50 transition-colors">🎬 Quản lý video</a>
+              <a href="/admin/masterclass" className="text-sm px-3 py-1.5 border border-gray-200 rounded-full text-gray-500 hover:bg-gray-50 transition-colors">✏️ Chỉnh sửa</a>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {masterclasses.length > 0 ? masterclasses.map(m => (
+              <a key={m.id} href={`/am-nhac/masterclass/${m.id}`}
+                className={`border-2 ${colorMap[m.color] || colorMap.rose} rounded-2xl p-5 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 block`}>
+                <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{m.date}</p>
+                <h3 className="font-semibold text-gray-900 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{m.professor}</h3>
+                <p className="text-xs text-gray-500 mb-3">{m.event}</p>
+                {m.piece && (
+                  <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-700 italic border border-gray-100 mb-3">
+                    🎵 {m.piece}
+                  </div>
+                )}
+                <p className="text-xs text-rose-400">Xem chi tiết →</p>
+              </a>
+            )) : (
+              [1,2,3].map(i => (
+                <div key={i} className="border-2 border-gray-100 bg-gray-50 rounded-2xl p-5 animate-pulse">
+                  <div className="h-3 bg-gray-200 rounded w-20 mb-3" />
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-gray-200 rounded w-1/2" />
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+      </div>
+    </div>
+  )
+}
