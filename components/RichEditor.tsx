@@ -1,5 +1,5 @@
 'use client'
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import TextAlign from '@tiptap/extension-text-align'
@@ -24,7 +24,6 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
   const editor = useEditor({
     extensions: [
       StarterKit,
-      
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Image.configure({ inline: true, allowBase64: false }),
       Placeholder.configure({ placeholder: placeholder || 'Viet noi dung o day...' }),
@@ -52,22 +51,25 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
     setShowImageOptions(true)
   }
 
-  const insertImage = () => {
-    if (!pendingImageUrl || !editor) return
+  const buildImageHtml = (src: string, align: 'center'|'left'|'right', caption: string) => {
     let imgStyle = 'display:block;margin:12px auto;max-width:80%;border-radius:8px;'
     let wrapStyle = 'text-align:center;clear:both;'
-    if (imageAlign === 'left') {
+    if (align === 'left') {
       imgStyle = 'float:left;margin:0 16px 8px 0;max-width:45%;border-radius:8px;'
       wrapStyle = 'overflow:hidden;'
-    } else if (imageAlign === 'right') {
+    } else if (align === 'right') {
       imgStyle = 'float:right;margin:0 0 8px 16px;max-width:45%;border-radius:8px;'
       wrapStyle = 'overflow:hidden;'
     }
-    const captionHtml = imageCaption
-      ? `<p style="text-align:center;font-style:italic;color:#888;font-size:0.85em;margin-top:4px;">${imageCaption}</p>`
+    const captionHtml = caption
+      ? `<p style="text-align:center;font-style:italic;color:#888;font-size:0.85em;margin-top:4px;">${caption}</p>`
       : ''
-    const html = `<div style="${wrapStyle}"><img src="${pendingImageUrl}" style="${imgStyle}" />${captionHtml}</div><p></p>`
-    editor.chain().focus().insertContent(html).run()
+    return `<div style="${wrapStyle}"><img src="${src}" style="${imgStyle}" />${captionHtml}</div><p></p>`
+  }
+
+  const insertImage = () => {
+    if (!pendingImageUrl || !editor) return
+    editor.chain().focus().insertContent(buildImageHtml(pendingImageUrl, imageAlign, imageCaption)).run()
     onChange(editor.getHTML())
     setShowImageOptions(false)
     setPendingImageUrl('')
@@ -78,25 +80,8 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
   const handlePdfUpload = async (file: File) => {
     const url = await uploadFile(file)
     if (!url || !editor) return
-    const html = `<div style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:12px 0;background:#f9fafb;"><div style="display:flex;align-items:center;gap:12px;"><span style="font-size:2em;">📄</span><div><p style="font-weight:600;margin:0;">${file.name}</p><a href="${url}" target="_blank" style="color:#f43f5e;font-size:0.85em;">Xem / Tai PDF</a></div></div></div><p></p>`
+    const html = `<div style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:12px 0;background:#f9fafb;"><p style="font-weight:600;margin:0 0 4px;">📄 ${file.name}</p><a href="${url}" target="_blank" style="color:#f43f5e;font-size:0.85em;">Xem / Tai PDF →</a></div><p></p>`
     editor.chain().focus().insertContent(html).run()
-    onChange(editor.getHTML())
-  }
-
-  const realignImage = (src: string, align: 'center'|'left'|'right') => {
-    if (!editor) return
-    let imgStyle = 'display:block;margin:12px auto;max-width:80%;border-radius:8px;'
-    let wrapStyle = 'text-align:center;clear:both;'
-    if (align === 'left') {
-      imgStyle = 'float:left;margin:0 16px 8px 0;max-width:45%;border-radius:8px;'
-      wrapStyle = 'overflow:hidden;'
-    } else if (align === 'right') {
-      imgStyle = 'float:right;margin:0 0 8px 16px;max-width:45%;border-radius:8px;'
-      wrapStyle = 'overflow:hidden;'
-    }
-    editor.chain().focus().deleteSelection().insertContent(
-      `<div style="${wrapStyle}"><img src="${src}" style="${imgStyle}" /></div><p></p>`
-    ).run()
     onChange(editor.getHTML())
   }
 
@@ -110,7 +95,7 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
       <div className="flex flex-wrap gap-1 p-2 bg-gray-50 border-b">
         <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))}>B</button>
         <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))}>I</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btn(editor.isActive('underline'))}>U</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={btn(editor.isActive('strike'))}>S</button>
         <div className="w-px bg-gray-200 mx-1" />
         <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btn(editor.isActive('heading', { level: 2 }))}>Tieu de</button>
         <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btn(editor.isActive('heading', { level: 3 }))}>Tieu de nho</button>
@@ -122,12 +107,12 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
         <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))}>Danh sach</button>
         <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btn(editor.isActive('orderedList'))}>So thu tu</button>
         <div className="w-px bg-gray-200 mx-1" />
-        <label className={`px-2 py-1 rounded text-sm border cursor-pointer transition-colors ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+        <label className={`px-2 py-1 rounded text-sm border cursor-pointer ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
           Chen anh
           <input type="file" accept="image/*" className="hidden" disabled={uploading}
             onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); e.target.value = '' }} />
         </label>
-        <label className={`px-2 py-1 rounded text-sm border cursor-pointer transition-colors ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+        <label className={`px-2 py-1 rounded text-sm border cursor-pointer ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
           Chen PDF
           <input type="file" accept="application/pdf" className="hidden" disabled={uploading}
             onChange={e => { const f = e.target.files?.[0]; if (f) handlePdfUpload(f); e.target.value = '' }} />
@@ -139,11 +124,11 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
         <div className="p-4 bg-amber-50 border-b border-amber-200">
           <p className="text-sm font-medium text-gray-700 mb-3">Chon cach hien thi anh:</p>
           <div className="flex gap-2 mb-3">
-            {([['center','Canh giua','Anh to, chu tren/duoi'],['left','Ben trai','Chu chay ben phai'],['right','Ben phai','Chu chay ben trai']] as const).map(([key,label,desc]) => (
-              <button key={key} type="button" onClick={() => setImageAlign(key)}
-                className={`flex-1 px-3 py-2 rounded-xl border-2 text-xs transition-all ${imageAlign === key ? 'border-rose-400 bg-rose-50 text-rose-600' : 'border-gray-200 bg-white text-gray-600'}`}>
+            {([['center','Canh giua','Anh to chu tren/duoi'],['left','Ben trai','Chu chay ben phai'],['right','Ben phai','Chu chay ben trai']] as [string,string,string][]).map(([key,label,desc]) => (
+              <button key={key} type="button" onClick={() => setImageAlign(key as any)}
+                className={`flex-1 px-3 py-2 rounded-xl border-2 text-xs ${imageAlign === key ? 'border-rose-400 bg-rose-50 text-rose-600' : 'border-gray-200 bg-white text-gray-600'}`}>
                 <div className="font-medium">{label}</div>
-                <div className="text-gray-400 mt-0.5">{desc}</div>
+                <div className="text-gray-400">{desc}</div>
               </button>
             ))}
           </div>
@@ -159,30 +144,6 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
           </div>
         </div>
       )}
-
-      <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}
-        shouldShow={({ editor }) => editor.isActive('image')}>
-        <div className="flex gap-1 bg-white border rounded-xl shadow-lg p-1">
-          {(['center','left','right'] as const).map(align => {
-            const label = align === 'center' ? 'Giua' : align === 'left' ? 'Trai' : 'Phai'
-            return (
-              <button key={align} type="button"
-                onClick={() => {
-                  const node = editor.state.doc.nodeAt(editor.state.selection.from)
-                  if (node?.attrs?.src) realignImage(node.attrs.src, align)
-                }}
-                className="px-3 py-1 text-xs rounded-lg hover:bg-gray-100 transition-colors">
-                {label}
-              </button>
-            )
-          })}
-          <div className="w-px bg-gray-200 mx-1" />
-          <button type="button" onClick={() => editor.chain().focus().deleteSelection().run()}
-            className="px-3 py-1 text-xs rounded-lg hover:bg-red-50 text-red-400 transition-colors">
-            Xoa
-          </button>
-        </div>
-      </BubbleMenu>
 
       <EditorContent editor={editor} className="prose max-w-none p-4 min-h-48 focus:outline-none text-sm leading-relaxed" />
 
