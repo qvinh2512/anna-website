@@ -14,11 +14,18 @@ type Props = {
   emoji: string
   subtitle: string
   color: string
+  settingKey?: string
 }
 
-export default async function PostList({ categoryId, basePath, title, emoji, subtitle, color }: Props) {
+export default async function PostList({ categoryId, basePath, title, emoji, subtitle, color, settingKey }: Props) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  const { data: settingsData } = await supabase.from('site_settings').select('key,value')
+  const s: Record<string, string> = {}
+  if (settingsData) settingsData.forEach(d => { s[d.key] = d.value || '' })
+  const displayTitle = settingKey ? (s[settingKey] || title) : title
+
   const { data: posts } = await supabase
     .from('posts')
     .select('*')
@@ -31,9 +38,9 @@ export default async function PostList({ categoryId, basePath, title, emoji, sub
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-10">
           <p className={`text-${color}-500 text-xs tracking-widest uppercase mb-2`}>Bài viết</p>
-          <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
-            {emoji} <em>{title}</em>
-          </h1>
+    <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
+  {emoji} <em>{displayTitle}</em>
+</h1>
           <p className="text-gray-500 text-sm">{subtitle}</p>
         </div>
 
