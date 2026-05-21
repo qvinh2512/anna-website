@@ -16,7 +16,7 @@ export default async function HomePage() {
   const { data: masterclasses } = await supabase
     .from('masterclasses')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('event_date', { ascending: false })
     .limit(6)
 
   return <HomeClient settings={settings} masterclasses={masterclasses || []} />
