@@ -4,7 +4,7 @@ import { createClient } from '../../../lib/supabase/client'
 import { useParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
-const RichEditor = dynamic(() => import('../../../../../components/RichEditor'), { ssr: false })
+const RichEditor = dynamic(() => import('../../../../components/RichEditor'), { ssr: false })
 
 const CATEGORIES = [
   { id: 1, name: '📖 Nhật Ký' },
