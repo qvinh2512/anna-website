@@ -10,6 +10,11 @@ export default async function NhatKyPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  const { data: settingsData } = await supabase.from('site_settings').select('key,value')
+  const s: Record<string, string> = {}
+  if (settingsData) settingsData.forEach(d => { s[d.key] = d.value || '' })
+  const menuName = s['menu_nhatky'] || 'Nhật Ký'
+
   const { data: posts } = await supabase
     .from('posts')
     .select('*')
@@ -22,10 +27,10 @@ export default async function NhatKyPage() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-10">
           <p className="text-rose-500 text-xs tracking-widest uppercase mb-2">Hằng ngày</p>
-          <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
-            📖 Nhật <em>Ký</em>
-          </h1>
-          <p className="text-gray-500 text-sm">Những trang nhật ký hằng ngày của Anna — suy nghĩ, cảm xúc và kỷ niệm.</p>
+         <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
+  📖 {menuName}
+</h1>
+<p className="text-gray-500 text-sm">Những trang nhật ký hằng ngày của Anna — suy nghĩ, cảm xúc và kỷ niệm.</p>
         </div>
 
         {user && (
