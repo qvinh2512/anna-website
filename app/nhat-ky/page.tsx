@@ -18,107 +18,105 @@ export default async function NhatKyPage() {
     .order('published_at', { ascending: false })
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
-      <div className="mb-10">
-        <p className="text-rose-500 text-xs tracking-widest uppercase mb-2">Hằng ngày</p>
-        <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
-          📖 Nhật <em>Ký</em>
-        </h1>
-        <p className="text-gray-500">Những trang nhật ký hằng ngày của Anna — suy nghĩ, cảm xúc và kỷ niệm.</p>
-      </div>
-
-      {user && (
-        <div className="mb-8">
-          <a href="/admin/bai-viet/moi"
-            className="inline-block px-6 py-2.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 transition-colors">
-            + Viết bài mới
-          </a>
+    <div style={{backgroundColor:'#fffbf5'}} className="min-h-screen">
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="mb-10">
+          <p className="text-rose-500 text-xs tracking-widest uppercase mb-2">Hằng ngày</p>
+          <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
+            📖 Nhật <em>Ký</em>
+          </h1>
+          <p className="text-gray-500 text-sm">Những trang nhật ký hằng ngày của Anna — suy nghĩ, cảm xúc và kỷ niệm.</p>
         </div>
-      )}
 
-      {!posts || posts.length === 0 ? (
-        <div className="text-center py-24 text-gray-400">
-          <div className="text-6xl mb-4">📖</div>
-          <p>Chưa có bài viết nào. Anna ơi, viết bài đầu tiên đi!</p>
-        </div>
-      ) : (
-        <div className="space-y-10">
-          {posts.map(post => (
-            <article key={post.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {user && (
+          <div className="mb-8">
+            <a href="/admin/bai-viet/moi"
+              className="inline-block px-6 py-2.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 transition-colors">
+              + Viết bài mới
+            </a>
+          </div>
+        )}
 
-              {/* Hình ảnh */}
-{post.images && post.images.length > 0 && (
-  <div className={`p-4 ${
-    post.images.length === 1
-      ? 'flex justify-center'
-      : 'grid grid-cols-2 gap-2 items-center'
-  }`}>
-    {post.images.map((img: string, i: number) => (
-      <div key={i} className={`rounded-xl overflow-hidden ${
-        post.images.length === 1 ? 'max-w-lg w-full' : ''
-      }`}>
-        <img
-          src={img}
-          alt={`Ảnh ${i+1}`}
-          className="w-full h-auto object-contain mx-auto block"
-        />
-      </div>
-    ))}
-  </div>
-)}
+        {!posts || posts.length === 0 ? (
+          <div className="text-center py-24 text-gray-400">
+            <div className="text-6xl mb-4">📖</div>
+            <p>Chưa có bài viết nào.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {posts.map(post => {
+              const firstImage = post.images?.[0]
+              const ytId = post.youtube_url ? getYouTubeId(post.youtube_url) : null
+              const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null
+              const coverImage = firstImage || thumb
 
-              <div className="p-6">
-                {/* Ngày */}
-                <p className="text-xs text-gray-400 mb-2">
-                  {post.published_at ? new Date(post.published_at).toLocaleDateString('vi-VN', {
-                    day: '2-digit', month: '2-digit', year: 'numeric'
-                  }) : ''}
-                </p>
+              return (
+                <article key={post.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  <div className="flex gap-0">
 
-                {/* Tiêu đề */}
-                <h2 className="text-xl font-semibold text-gray-900 mb-3"
-                  style={{fontFamily:"'Playfair Display',serif"}}>
-                  {post.title}
-                </h2>
+                    {/* Ảnh nhỏ bên trái */}
+                    {coverImage && (
+                      <div className="flex-shrink-0 w-36 sm:w-48">
+                        <img src={coverImage} alt={post.title}
+                          className="w-full h-full object-cover" style={{minHeight:'120px',maxHeight:'160px'}} />
+                      </div>
+                    )}
 
-                {/* Nội dung */}
-                {post.content && (
-  <div
-    className="prose prose-sm max-w-none text-gray-600 mb-4"
-    dangerouslySetInnerHTML={{ __html: post.content }}
-  />
-)}
-                {/* Video YouTube */}
-                {post.youtube_url && getYouTubeId(post.youtube_url) && (
-                  <div className="mt-4">
-                    <div className="relative w-full rounded-xl overflow-hidden bg-black"
-                      style={{paddingTop:'56.25%'}}>
-                      <iframe
-                        className="absolute inset-0 w-full h-full"
-                        src={`https://www.youtube.com/embed/${getYouTubeId(post.youtube_url)}?rel=0`}
-                        title={post.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
+                    {/* Nội dung bên phải */}
+                    <div className="flex-1 p-5 flex flex-col justify-between min-w-0">
+                      <div>
+                        {/* Ngày + danh mục */}
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs text-gray-400">
+                            {post.published_at ? new Date(post.published_at).toLocaleDateString('vi-VN', {
+                              day:'2-digit', month:'2-digit', year:'numeric'
+                            }) : ''}
+                          </span>
+                          {ytId && (
+                            <span className="text-xs bg-red-50 text-red-400 px-2 py-0.5 rounded-full">▶ Video</span>
+                          )}
+                        </div>
+
+                        {/* Tiêu đề */}
+                        <h2 className="text-base font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug"
+                          style={{fontFamily:"'Playfair Display',serif"}}>
+                          {post.title}
+                        </h2>
+
+                        {/* Tóm tắt */}
+                        {post.excerpt ? (
+                          <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed">{post.excerpt}</p>
+                        ) : post.content ? (
+                          <div className="text-gray-500 text-sm line-clamp-2 leading-relaxed"
+                            dangerouslySetInnerHTML={{
+                              __html: post.content.replace(/<[^>]+>/g, ' ').slice(0, 120) + '...'
+                            }} />
+                        ) : null}
+                      </div>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between mt-3">
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-1">
+                          {(post.tags || []).slice(0,3).map((tag: string, i: number) => (
+                            <span key={i} className="text-xs bg-rose-50 text-rose-400 px-2 py-0.5 rounded-full">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                        <a href={`/nhat-ky/${post.slug}`}
+                          className="text-xs text-rose-400 hover:text-rose-600 transition-colors flex-shrink-0 ml-2">
+                          Đọc tiếp →
+                        </a>
+                      </div>
                     </div>
                   </div>
-                )}
-
-                {/* Tags */}
-                {post.tags && post.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {post.tags.map((tag: string, i: number) => (
-                      <span key={i} className="text-xs bg-rose-50 text-rose-400 px-2 py-0.5 rounded-full">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
+                </article>
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
