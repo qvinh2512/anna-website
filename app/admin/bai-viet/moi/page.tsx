@@ -1,6 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '../../../lib/supabase/client'
+import dynamic from 'next/dynamic'
+
+const RichEditor = dynamic(() => import('../../../../components/RichEditor'), { ssr: false })
 
 const CATEGORIES = [
   { id: 1, name: '📖 Nhật Ký',    slug: 'nhat-ky'    },
@@ -13,15 +16,15 @@ const CATEGORIES = [
 
 export default function NewPostPage() {
   const supabase = createClient()
-  const [title, setTitle]       = useState('')
-  const [content, setContent]   = useState('')
-  const [excerpt, setExcerpt]   = useState('')
-  const [youtube, setYoutube]   = useState('')
-  const [catId, setCatId]       = useState(1)
-  const [tags, setTags]         = useState('')
-  const [saving, setSaving]     = useState(false)
-  const [done, setDone]         = useState(false)
-  const [images, setImages]     = useState<string[]>([])
+  const [title, setTitle]     = useState('')
+  const [content, setContent] = useState('')
+  const [excerpt, setExcerpt] = useState('')
+  const [youtube, setYoutube] = useState('')
+  const [catId, setCatId]     = useState(1)
+  const [tags, setTags]       = useState('')
+  const [saving, setSaving]   = useState(false)
+  const [done, setDone]       = useState(false)
+  const [images, setImages]   = useState<string[]>([])
   const [uploading, setUploading] = useState(false)
 
   const uploadImage = async (file: File) => {
@@ -35,9 +38,7 @@ export default function NewPostPage() {
     setUploading(false)
   }
 
-  const removeImage = (idx: number) => {
-    setImages(prev => prev.filter((_, i) => i !== idx))
-  }
+  const removeImage = (idx: number) => setImages(prev => prev.filter((_, i) => i !== idx))
 
   const save = async (status: 'draft' | 'published') => {
     if (!title.trim()) { alert('Nhập tiêu đề đi!'); return }
@@ -62,7 +63,7 @@ export default function NewPostPage() {
       title:        title.trim(),
       slug,
       excerpt:      excerpt.trim() || null,
-      content:      content.trim() || null,
+      content:      content || null,
       youtube_url:  youtube.trim() || null,
       images:       images.length > 0 ? images : null,
       tags:         tags.split(',').map(t=>t.trim()).filter(Boolean),
@@ -83,7 +84,7 @@ export default function NewPostPage() {
         <a href="/admin/bai-viet" className="px-5 py-2 border rounded-full text-sm hover:bg-gray-50">
           Xem danh sách bài
         </a>
-        <button onClick={()=>{setDone(false);setTitle('');setContent('');setExcerpt('');setImages([])}}
+        <button onClick={() => { setDone(false); setTitle(''); setContent(''); setExcerpt(''); setImages([]) }}
           className="px-5 py-2 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600">
           Viết bài mới
         </button>
@@ -124,74 +125,21 @@ export default function NewPostPage() {
             className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300 resize-none" />
         </div>
 
-        {/* Nội dung */}
+        {/* Nội dung - Rich Editor */}
         <div>
-          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">Nội dung bài viết</label>
-          <textarea rows={12} value={content} onChange={e=>setContent(e.target.value)}
-            placeholder="Viết nội dung bài ở đây..."
-            className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300 resize-none leading-relaxed" />
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-2">Nội dung bài viết</label>
+          <RichEditor value={content} onChange={setContent} placeholder="Viết nội dung bài ở đây..." />
         </div>
 
-        {/* Upload ảnh */}
+        {/* Upload ảnh bìa */}
         <div>
-          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-2">📸 Hình ảnh</label>
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-2">📸 Ảnh bìa (hiển thị đầu bài)</label>
           <label className={`flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? 'border-gray-200 bg-gray-50' : 'border-rose-200 hover:border-rose-400 hover:bg-rose-50'}`}>
-            <input type="file" accept="image/*" multiple className="hidden"
-              disabled={uploading}
-              onChange={e => {
-                const files = Array.from(e.target.files || [])
-                files.forEach(f => uploadImage(f))
-                e.target.value = ''
-              }} />
+            <input type="file" accept="image/*" multiple className="hidden" disabled={uploading}
+              onChange={e => { Array.from(e.target.files||[]).forEach(f=>uploadImage(f)); e.target.value='' }} />
             {uploading
               ? <span className="text-xs text-gray-400">⏳ Đang upload...</span>
-              : <span className="text-xs text-rose-400">📎 Chọn ảnh từ máy (có thể chọn nhiều)</span>
-            }
+              : <span className="text-xs text-rose-400">📎 Chọn ảnh bìa (có thể chọn nhiều)</span>}
           </label>
           {images.length > 0 && (
-            <div className="grid grid-cols-3 gap-2 mt-3">
-              {images.map((url, i) => (
-                <div key={i} className="relative group rounded-xl overflow-hidden">
-                  <img src={url} alt={`Ảnh ${i+1}`} className="w-full h-24 object-cover" />
-                  <button onClick={() => removeImage(i)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* YouTube */}
-        <div>
-          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">🎬 Link YouTube (nếu có)</label>
-          <input type="url" value={youtube} onChange={e=>setYoutube(e.target.value)}
-            placeholder="https://youtube.com/watch?v=..."
-            className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
-        </div>
-
-        {/* Tags */}
-        <div>
-          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">Tags (phân cách bằng dấu phẩy)</label>
-          <input type="text" value={tags} onChange={e=>setTags(e.target.value)}
-            placeholder="violin, masterclass, 2025"
-            className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
-        </div>
-
-        {/* Buttons */}
-        <div className="flex gap-3 pt-2">
-          <button onClick={()=>save('draft')} disabled={saving||uploading}
-            className="px-6 py-2.5 border border-gray-200 rounded-full text-sm hover:bg-gray-50 disabled:opacity-60 transition-colors">
-            💾 Lưu nháp
-          </button>
-          <button onClick={()=>save('published')} disabled={saving||uploading}
-            className="px-6 py-2.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 disabled:opacity-60 transition-colors">
-            🚀 {saving ? 'Đang đăng...' : 'Đăng bài'}
-          </button>
-        </div>
-
-      </div>
-    </div>
-  )
-}
+            <div className="grid grid-cols-
