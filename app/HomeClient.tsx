@@ -39,13 +39,13 @@ export default function HomeClient({ settings, masterclasses }: Props) {
   const dream = activeDream ? dreams.find(d => d.key === activeDream) : null
 
   const categories = [
-    { icon: '📖', label: s('menu_nhatky', 'Nhật Ký'),      href: '/nhat-ky',    desc: 'Hằng ngày',            from: 'from-rose-400',    to: 'to-rose-600' },
-    { icon: '🎻', label: s('menu_amnhac', 'Âm Nhạc'),      href: '/am-nhac',    desc: 'Violin · Biểu diễn',   from: 'from-amber-400',   to: 'to-amber-600' },
-    { icon: '🎨', label: s('menu_nghethuat', 'Nghệ Thuật'), href: '/nghe-thuat', desc: 'Hội họa · Triển lãm',  from: 'from-emerald-400', to: 'to-emerald-600' },
-    { icon: '📚', label: s('menu_hocthuat', 'Học Thuật'),   href: '/hoc-thuat',  desc: 'Sedbergh · Kiến thức', from: 'from-blue-400',    to: 'to-blue-600' },
-    { icon: '👫', label: s('menu_banbe', 'Bạn Bè'),         href: '/ban-be',     desc: 'Diễn đàn · Giao lưu',  from: 'from-pink-400',    to: 'to-pink-600' },
-    { icon: '🌐', label: s('menu_xahoi', 'Xã Hội'),         href: '/xa-hoi',     desc: 'Cộng đồng · Từ thiện', from: 'from-violet-400',  to: 'to-violet-600' },
-  ]
+  { icon: '📖', label: s('menu_nhatky', 'Nhật Ký'),      href: '/nhat-ky',    desc: 'Hằng ngày',            from: 'from-rose-400',    to: 'to-rose-600' },
+  { icon: '🎻', label: s('menu_amnhac', 'Âm Nhạc'),      href: '/am-nhac',    desc: 'Violin · Biểu diễn',   from: 'from-amber-400',   to: 'to-amber-600' },
+  { icon: '🎨', label: s('menu_nghethuat', 'Nghệ Thuật'), href: '/nghe-thuat', desc: 'Hội họa · Triển lãm',  from: 'from-emerald-400', to: 'to-emerald-600' },
+  { icon: '📚', label: s('menu_hocthuat', 'Học Thuật'),   href: '/hoc-thuat',  desc: 'Sedbergh · Kiến thức', from: 'from-blue-400',    to: 'to-blue-600' },
+  { icon: '👫', label: s('menu_banbe', 'Bạn Bè'),         href: '/ban-be',     desc: 'Diễn đàn · Giao lưu',  from: 'from-pink-400',    to: 'to-pink-600' },
+  { icon: '🌐', label: s('menu_xahoi', 'Xã Hội'),         href: '/xa-hoi',     desc: 'Cộng đồng · Từ thiện', from: 'from-violet-400',  to: 'to-violet-600' },
+]
 
   return (
     <div>
