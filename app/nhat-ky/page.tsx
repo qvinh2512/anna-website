@@ -83,11 +83,11 @@ export default async function NhatKyPage() {
 
                 {/* Nội dung */}
                 {post.content && (
-                  <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap mb-4">
-                    {post.content}
-                  </p>
-                )}
-
+  <div
+    className="prose prose-sm max-w-none text-gray-600 mb-4"
+    dangerouslySetInnerHTML={{ __html: post.content }}
+  />
+)}
                 {/* Video YouTube */}
                 {post.youtube_url && getYouTubeId(post.youtube_url) && (
                   <div className="mt-4">
