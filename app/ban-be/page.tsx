@@ -250,7 +250,7 @@ export default function BanBePage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <p className="text-rose-500 text-xs tracking-widest uppercase mb-2">Diễn đàn · Giao lưu · Kết nối</p>
-          <h1 className="text-4xl" style={{fontFamily:"'Playfair Display',serif"}}>👫 Bạn <em>Bè</em></h1>
+          <h1 className="text-4xl" style={{fontFamily:"'Playfair Display',serif"}}>👫 Bạn <em>bè</em></h1>
           <p className="text-gray-500 text-sm mt-1">Nơi Anna và các bạn trao đổi, chia sẻ về âm nhạc và cuộc sống.</p>
         </div>
         {user ? (
