@@ -55,6 +55,7 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
 
   const insertImage = () => {
     if (!pendingImageUrl || !editor) return
+<<<<<<< HEAD
     let imgStyle = 'display:block;margin:12px auto;max-width:80%;border-radius:8px;'
     let wrapStyle = 'text-align:center;clear:both;'
     if (imageAlign === 'left') {
@@ -199,3 +200,9 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
     </div>
   )
 }
+=======
+    const floatStyle = imageAlign === 'left'
+      ? 'float:left;margin:0 16px 8px 0;max-width:45%;'
+      : imageAlign === 'right'
+      ? 'float:righ
+>>>>>>> d3b8cef1c2daf66e3a3ba2f5e04340b9b679aa16
