@@ -31,10 +31,10 @@ export default function HomeClient({ settings, masterclasses }: Props) {
   const s = (key: string, fallback: string) => settings[key] || fallback
 
   const dreams = [
-    { key: 'violin',   label: s('menu_violin', '🎻 Violin'),        color: 'from-rose-500 to-rose-700',   title: s('dream_violin_title', '🎻 Violin'), body: s('dream_violin_body', '') },
-    { key: 'hoi-hoa',  label: s('menu_hoihoa', '🎨 Hội họa'),       color: 'from-amber-500 to-amber-700', title: s('dream_hoihoa_title', '🎨 Hội họa'), body: s('dream_hoihoa_body', '') },
-    { key: 'que-sera', label: s('menu_quesera', '🦷 Que sera sera'), color: 'from-purple-500 to-purple-700', title: s('dream_quesera_title', '🦷 Que sera sera'), body: s('dream_quesera_body', '') },
-  ]
+  { key: 'violin',   label: '🎻 Violin',        color: 'from-rose-500 to-rose-700',   title: s('dream_violin_title', '🎻 Violin'), body: s('dream_violin_body', '') },
+  { key: 'hoi-hoa',  label: '🎨 Hội họa',       color: 'from-amber-500 to-amber-700', title: s('dream_hoihoa_title', '🎨 Hội họa'), body: s('dream_hoihoa_body', '') },
+  { key: 'que-sera', label: '🦷 Que sera sera', color: 'from-purple-500 to-purple-700', title: s('dream_quesera_title', '🦷 Que sera sera'), body: s('dream_quesera_body', '') },
+]
 
   const dream = activeDream ? dreams.find(d => d.key === activeDream) : null
 
