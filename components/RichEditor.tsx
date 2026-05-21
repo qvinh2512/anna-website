@@ -3,7 +3,6 @@ import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import TextAlign from '@tiptap/extension-text-align'
-import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
 import { createClient } from '../app/lib/supabase/client'
 import { useState } from 'react'
@@ -25,7 +24,7 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Underline,
+      
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Image.configure({ inline: true, allowBase64: false }),
       Placeholder.configure({ placeholder: placeholder || 'Viet noi dung o day...' }),
