@@ -1,4 +1,23 @@
-import PostList from '@/components/PostList'
-export default function XaHoi() {
-  return <PostList categoryId={6} basePath="xa-hoi" title="Xã Hội" emoji="🌏" subtitle="Cộng đồng, từ thiện và các hoạt động xã hội của Anna." color="violet" settingKey="menu_xahoi" />
+import { createClient } from '@/lib/supabase/client'
+import HomeClient from './HomeClient'
+
+export default async function HomePage() {
+  const supabase = createClient()
+
+  const { data: settingsRows } = await supabase
+    .from('settings')
+    .select('key, value')
+
+  const settings: Record<string, string> = {}
+  for (const row of settingsRows || []) {
+    settings[row.key] = row.value
+  }
+
+  const { data: masterclasses } = await supabase
+    .from('masterclasses')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(6)
+
+  return <HomeClient settings={settings} masterclasses={masterclasses || []} />
 }
