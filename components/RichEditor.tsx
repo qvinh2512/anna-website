@@ -93,20 +93,20 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
   return (
     <div className="border rounded-xl overflow-hidden">
       <div className="flex flex-wrap gap-1 p-2 bg-gray-50 border-b">
-        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))}>B</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))}>I</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={btn(editor.isActive('strike'))}>S</button>
-        <div className="w-px bg-gray-200 mx-1" />
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btn(editor.isActive('heading', { level: 2 }))}>Tieu de</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btn(editor.isActive('heading', { level: 3 }))}>Tieu de nho</button>
-        <div className="w-px bg-gray-200 mx-1" />
-        <button type="button" onClick={() => editor.chain().focus().setTextAlign('left').run()} className={btn(editor.isActive({ textAlign: 'left' }))}>Trai</button>
-        <button type="button" onClick={() => editor.chain().focus().setTextAlign('center').run()} className={btn(editor.isActive({ textAlign: 'center' }))}>Giua</button>
-        <button type="button" onClick={() => editor.chain().focus().setTextAlign('right').run()} className={btn(editor.isActive({ textAlign: 'right' }))}>Phai</button>
-        <div className="w-px bg-gray-200 mx-1" />
-        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))}>Danh sach</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btn(editor.isActive('orderedList'))}>So thu tu</button>
-        <div className="w-px bg-gray-200 mx-1" />
+        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))} title="Bold"><b>B</b></button>
+<button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))} title="Italic"><i>I</i></button>
+<button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={btn(editor.isActive('strike'))} title="Strikethrough"><s>S</s></button>
+<div className="w-px bg-gray-200 mx-1" />
+<button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btn(editor.isActive('heading', { level: 2 }))} title="Heading 2">H2</button>
+<button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btn(editor.isActive('heading', { level: 3 }))} title="Heading 3">H3</button>
+<div className="w-px bg-gray-200 mx-1" />
+<button type="button" onClick={() => editor.chain().focus().setTextAlign('left').run()} className={btn(editor.isActive({ textAlign: 'left' }))} title="Align left">≡←</button>
+<button type="button" onClick={() => editor.chain().focus().setTextAlign('center').run()} className={btn(editor.isActive({ textAlign: 'center' }))} title="Align center">≡↔</button>
+<button type="button" onClick={() => editor.chain().focus().setTextAlign('right').run()} className={btn(editor.isActive({ textAlign: 'right' }))} title="Align right">≡→</button>
+<div className="w-px bg-gray-200 mx-1" />
+<button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))} title="Bullet list">• List</button>
+<button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btn(editor.isActive('orderedList'))} title="Numbered list">1. List</button>
+<div className="w-px bg-gray-200 mx-1" />
         <label className={`px-2 py-1 rounded text-sm border cursor-pointer ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
           Chen anh
           <input type="file" accept="image/*" className="hidden" disabled={uploading}
