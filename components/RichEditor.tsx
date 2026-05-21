@@ -6,6 +6,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
 import { createClient } from '../app/lib/supabase/client'
+import { useState } from 'react'
 
 type Props = {
   value: string
@@ -15,26 +16,83 @@ type Props = {
 
 export default function RichEditor({ value, onChange, placeholder }: Props) {
   const supabase = createClient()
+  const [uploading, setUploading] = useState(false)
+  const [showImageOptions, setShowImageOptions] = useState(false)
+  const [pendingImageUrl, setPendingImageUrl] = useState('')
+  const [imageAlign, setImageAlign] = useState<'center'|'left'|'right'>('center')
+  const [imageCaption, setImageCaption] = useState('')
 
   const editor = useEditor({
     extensions: [
       StarterKit,
       Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
-      Image.configure({ inline: false, allowBase64: false }),
+      Image.configure({ inline: true, allowBase64: false }),
       Placeholder.configure({ placeholder: placeholder || 'Viết nội dung ở đây...' }),
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
   })
 
-  const uploadImage = async (file: File) => {
+  const uploadFile = async (file: File) => {
+    setUploading(true)
     const ext = file.name.split('.').pop()
-    const fileName = `posts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const isPdf = file.type === 'application/pdf'
+    const folder = isPdf ? 'sheets' : 'posts'
+    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const { error } = await supabase.storage.from('anna-images').upload(fileName, file)
-    if (error) { alert('Lỗi upload: ' + error.message); return }
+    if (error) { alert('Lỗi upload: ' + error.message); setUploading(false); return null }
     const { data } = supabase.storage.from('anna-images').getPublicUrl(fileName)
-    editor?.chain().focus().setImage({ src: data.publicUrl }).run()
+    setUploading(false)
+    return data.publicUrl
+  }
+
+  const handleImageUpload = async (file: File) => {
+    const url = await uploadFile(file)
+    if (!url) return
+    setPendingImageUrl(url)
+    setShowImageOptions(true)
+  }
+
+  const insertImage = () => {
+    if (!pendingImageUrl || !editor) return
+    const floatStyle = imageAlign === 'left'
+      ? 'float:left;margin:0 16px 8px 0;max-width:45%;'
+      : imageAlign === 'right'
+      ? 'float:right;margin:0 0 8px 16px;max-width:45%;'
+      : 'display:block;margin:12px auto;max-width:80%;'
+
+    const captionHtml = imageCaption
+      ? `<p style="text-align:center;font-style:italic;color:#888;font-size:0.85em;margin-top:4px;">${imageCaption}</p>`
+      : ''
+
+    const wrapStyle = imageAlign === 'center'
+      ? 'text-align:center;clear:both;'
+      : imageAlign === 'left' ? 'overflow:hidden;' : 'overflow:hidden;'
+
+    const html = `<div style="${wrapStyle}"><img src="${pendingImageUrl}" style="${floatStyle}border-radius:8px;" />${captionHtml}</div><p></p>`
+    editor.chain().focus().insertContent(html).run()
+    onChange(editor.getHTML())
+    setShowImageOptions(false)
+    setPendingImageUrl('')
+    setImageCaption('')
+    setImageAlign('center')
+  }
+
+  const handlePdfUpload = async (file: File) => {
+    const url = await uploadFile(file)
+    if (!url || !editor) return
+    const html = `<div style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;margin:12px 0;background:#f9fafb;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:2em;">📄</span>
+        <div>
+          <p style="font-weight:600;margin:0;">${file.name}</p>
+          <a href="${url}" target="_blank" style="color:#f43f5e;font-size:0.85em;">Xem / Tải PDF →</a>
+        </div>
+      </div>
+    </div><p></p>`
+    editor.chain().focus().insertContent(html).run()
+    onChange(editor.getHTML())
   }
 
   if (!editor) return null
@@ -46,49 +104,71 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
     <div className="border rounded-xl overflow-hidden">
       {/* Toolbar */}
       <div className="flex flex-wrap gap-1 p-2 bg-gray-50 border-b">
-        {/* Bold, Italic, Underline */}
-        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()}
-          className={btnClass(editor.isActive('bold'))}>B</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={btnClass(editor.isActive('italic'))}>I</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={btnClass(editor.isActive('underline'))}>U</button>
-
+        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btnClass(editor.isActive('bold'))}>B</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btnClass(editor.isActive('italic'))}>I</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btnClass(editor.isActive('underline'))}>U</button>
         <div className="w-px bg-gray-200 mx-1" />
-
-        {/* Heading */}
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={btnClass(editor.isActive('heading', { level: 2 }))}>H2</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={btnClass(editor.isActive('heading', { level: 3 }))}>H3</button>
-
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btnClass(editor.isActive('heading', { level: 2 }))}>H2</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btnClass(editor.isActive('heading', { level: 3 }))}>H3</button>
         <div className="w-px bg-gray-200 mx-1" />
-
-        {/* Align */}
-        <button type="button" onClick={() => editor.chain().focus().setTextAlign('left').run()}
-          className={btnClass(editor.isActive({ textAlign: 'left' }))}>⬅</button>
-        <button type="button" onClick={() => editor.chain().focus().setTextAlign('center').run()}
-          className={btnClass(editor.isActive({ textAlign: 'center' }))}>↔</button>
-        <button type="button" onClick={() => editor.chain().focus().setTextAlign('right').run()}
-          className={btnClass(editor.isActive({ textAlign: 'right' }))}>➡</button>
-
+        <button type="button" onClick={() => editor.chain().focus().setTextAlign('left').run()} className={btnClass(editor.isActive({ textAlign: 'left' }))}>⬅</button>
+        <button type="button" onClick={() => editor.chain().focus().setTextAlign('center').run()} className={btnClass(editor.isActive({ textAlign: 'center' }))}>↔</button>
+        <button type="button" onClick={() => editor.chain().focus().setTextAlign('right').run()} className={btnClass(editor.isActive({ textAlign: 'right' }))}>➡</button>
         <div className="w-px bg-gray-200 mx-1" />
-
-        {/* List */}
-        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={btnClass(editor.isActive('bulletList'))}>• List</button>
-        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={btnClass(editor.isActive('orderedList'))}>1. List</button>
-
+        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btnClass(editor.isActive('bulletList'))}>• List</button>
+        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btnClass(editor.isActive('orderedList'))}>1. List</button>
         <div className="w-px bg-gray-200 mx-1" />
-
         {/* Upload ảnh */}
-        <label className="px-2 py-1 rounded text-sm border bg-white text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+        <label className={`px-2 py-1 rounded text-sm border cursor-pointer transition-colors ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
           📷 Ảnh
-          <input type="file" accept="image/*" className="hidden"
-            onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.target.value = '' }} />
+          <input type="file" accept="image/*" className="hidden" disabled={uploading}
+            onChange={e => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); e.target.value = '' }} />
         </label>
+        {/* Upload PDF */}
+        <label className={`px-2 py-1 rounded text-sm border cursor-pointer transition-colors ${uploading ? 'bg-gray-100 text-gray-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+          📄 PDF
+          <input type="file" accept="application/pdf" className="hidden" disabled={uploading}
+            onChange={e => { const f = e.target.files?.[0]; if (f) handlePdfUpload(f); e.target.value = '' }} />
+        </label>
+        {uploading && <span className="text-xs text-gray-400 self-center">⏳ Đang upload...</span>}
       </div>
+
+      {/* Popup chọn kiểu ảnh */}
+      {showImageOptions && (
+        <div className="p-4 bg-amber-50 border-b border-amber-200">
+          <p className="text-sm font-medium text-gray-700 mb-3">📐 Chọn cách hiển thị ảnh:</p>
+          <div className="flex gap-2 mb-3">
+            {[
+              { key: 'center', label: '↔ Canh giữa', desc: 'Ảnh to, chữ trên/dưới' },
+              { key: 'left',   label: '⬅ Trái',      desc: 'Chữ chạy bên phải' },
+              { key: 'right',  label: '➡ Phải',      desc: 'Chữ chạy bên trái' },
+            ].map(opt => (
+              <button key={opt.key} type="button"
+                onClick={() => setImageAlign(opt.key as any)}
+                className={`flex-1 px-3 py-2 rounded-xl border-2 text-xs transition-all ${imageAlign === opt.key ? 'border-rose-400 bg-rose-50 text-rose-600' : 'border-gray-200 bg-white text-gray-600'}`}>
+                <div className="font-medium">{opt.label}</div>
+                <div className="text-gray-400 mt-0.5">{opt.desc}</div>
+              </button>
+            ))}
+          </div>
+          <div className="mb-3">
+            <label className="block text-xs text-gray-500 mb-1">Chú thích ảnh (tuỳ chọn, in nghiêng bên dưới)</label>
+            <input type="text" value={imageCaption} onChange={e => setImageCaption(e.target.value)}
+              placeholder="Ví dụ: Anna tại buổi biểu diễn SOS 2025"
+              className="w-full px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:border-rose-300" />
+          </div>
+          <div className="flex gap-2">
+            <button type="button" onClick={insertImage}
+              className="px-4 py-1.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 transition-colors">
+              ✅ Chèn ảnh
+            </button>
+            <button type="button" onClick={() => { setShowImageOptions(false); setPendingImageUrl('') }}
+              className="px-4 py-1.5 border rounded-full text-sm hover:bg-gray-50 transition-colors">
+              Hủy
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Editor area */}
       <EditorContent editor={editor}
@@ -103,7 +183,7 @@ export default function RichEditor({ value, onChange, placeholder }: Props) {
           height: 0;
         }
         .ProseMirror:focus { outline: none; }
-        .ProseMirror img { max-width: 100%; border-radius: 8px; margin: 8px auto; display: block; }
+        .ProseMirror img { border-radius: 8px; }
         .ProseMirror h2 { font-size: 1.4em; font-weight: bold; margin: 12px 0 6px; }
         .ProseMirror h3 { font-size: 1.2em; font-weight: bold; margin: 10px 0 4px; }
         .ProseMirror ul { list-style: disc; padding-left: 20px; }
