@@ -63,8 +63,8 @@ export default function AmNhacPage() {
         <div className="mb-8">
           <p className="text-yellow-600 text-xs tracking-widest uppercase mb-2">Violin · Biểu diễn · Masterclass</p>
           <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
-            🎻 Âm <em>Nhạc</em>
-          </h1>
+  🎻 Âm <em>nhạc</em>
+</h1>
           <p className="text-gray-500 text-sm">Violin, biểu diễn, masterclass, luyện tập và hành trình tại Nhạc viện.</p>
         </div>
 
