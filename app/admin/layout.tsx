@@ -14,6 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ['📝 Bài viết',         '/admin/bai-viet'],
             ['✏️ Viết bài mới',     '/admin/bai-viet/moi'],
             ['🎻 Masterclass',      '/admin/masterclass'],
+      ['🎬 Video',            '/admin/video'],
             ['⭐ Giới thiệu',       '/admin/gioi-thieu'],
             ['👤 Thành viên',       '/admin/thanh-vien'],
             ['⚙️ Cài đặt',         '/admin/cai-dat'],
