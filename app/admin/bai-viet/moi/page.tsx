@@ -142,4 +142,49 @@ export default function NewPostPage() {
               : <span className="text-xs text-rose-400">📎 Chọn ảnh bìa (có thể chọn nhiều)</span>}
           </label>
           {images.length > 0 && (
-            <div className="grid grid-cols-
+            <div className="grid grid-cols-3 gap-2 mt-3">
+              {images.map((url, i) => (
+                <div key={i} className="relative group rounded-xl overflow-hidden">
+                  <img src={url} alt={`Ảnh ${i+1}`} className="w-full h-24 object-cover" />
+                  <button onClick={() => removeImage(i)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* YouTube */}
+        <div>
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">🎬 Link YouTube (nếu có)</label>
+          <input type="url" value={youtube} onChange={e=>setYoutube(e.target.value)}
+            placeholder="https://youtube.com/watch?v=..."
+            className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">Tags (phân cách bằng dấu phẩy)</label>
+          <input type="text" value={tags} onChange={e=>setTags(e.target.value)}
+            placeholder="violin, masterclass, 2025"
+            className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-3 pt-2">
+          <button onClick={()=>save('draft')} disabled={saving||uploading}
+            className="px-6 py-2.5 border border-gray-200 rounded-full text-sm hover:bg-gray-50 disabled:opacity-60 transition-colors">
+            💾 Lưu nháp
+          </button>
+          <button onClick={()=>save('published')} disabled={saving||uploading}
+            className="px-6 py-2.5 bg-rose-500 text-white rounded-full text-sm hover:bg-rose-600 disabled:opacity-60 transition-colors">
+            🚀 {saving ? 'Đang đăng...' : 'Đăng bài'}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  )
+}
