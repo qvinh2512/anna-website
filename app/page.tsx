@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '../lib/supabase/client'
 import HomeClient from './HomeClient'
 
 export default async function HomePage() {
