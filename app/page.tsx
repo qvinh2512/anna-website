@@ -1,11 +1,11 @@
-import { createClient } from './lib/supabase/client'
 import HomeClient from './HomeClient'
+import { createClient } from './lib/supabase/client'
 
 export default async function HomePage() {
   const supabase = createClient()
 
   const { data: settingsRows } = await supabase
-    .from('settings')
+    .from('site_settings')        // ← đổi từ 'settings' thành 'site_settings'
     .select('key, value')
 
   const settings: Record<string, string> = {}
