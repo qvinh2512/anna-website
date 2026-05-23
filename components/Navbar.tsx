@@ -71,7 +71,6 @@ export default function Navbar({ user, profile }: any) {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden border-t bg-white dark:bg-gray-950 py-6">
           <div className="flex flex-col px-6 gap-6 text-base font-medium">
