@@ -56,9 +56,15 @@ export default function Navbar({ user, profile }: any) {
           </button>
 
           {user ? (
-            <Link href="/admin" className="px-6 py-2.5 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium rounded-2xl transition-colors">
-              Admin
-            </Link>
+            {user ? (
+  <div className="flex items-center gap-3">
+    <span className="hidden md:block text-sm text-gray-500 dark:text-gray-400">
+      Xin chào, <span className="font-medium text-gray-800 dark:text-gray-200">{profile?.full_name || 'Anna'}</span>
+    </span>
+    <Link href="/admin" className="px-6 py-2.5 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium rounded-2xl transition-colors">
+      Admin
+    </Link>
+  </div>
           ) : (
             <Link href="/dang-nhap" className="px-6 py-2.5 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-2xl text-sm font-medium transition-colors">
               Đăng nhập
