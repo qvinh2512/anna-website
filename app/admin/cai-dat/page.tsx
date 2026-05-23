@@ -6,13 +6,31 @@ type Settings = Record<string, string>
 
 const SECTIONS = [
   {
+    id: 'profile',
+    title: '👤 Thông tin cá nhân',
+    desc: 'Hiển thị ở footer',
+    fields: [
+      { key: 'tagline', label: 'Tagline (dưới tên ở footer)', placeholder: 'Violinist • Young Artist' },
+      { key: 'bio',     label: 'Tiểu sử ngắn (footer)',       placeholder: 'Hành trình âm nhạc, nghệ thuật và sự trưởng thành của một cô bé tài năng.' },
+    ]
+  },
+  {
+    id: 'contact',
+    title: '📬 Thông tin liên hệ',
+    desc: 'Hiển thị ở phần Liên hệ trong footer',
+    fields: [
+      { key: 'email', label: 'Email',       placeholder: 'contact@annaduyenan.info' },
+      { key: 'phone', label: 'Điện thoại',  placeholder: '+84 123 456 789' },
+    ]
+  },
+  {
     id: 'stats',
     title: '📊 Thống kê trang chủ',
     desc: 'Các con số hiển thị ở trang chủ',
     fields: [
-      { key: 'stat_violin',      label: 'Số năm Violin',       placeholder: '4+' },
-      { key: 'stat_tranh',       label: 'Số tranh triển lãm',  placeholder: '64' },
-      { key: 'stat_masterclass', label: 'Số Masterclass',      placeholder: '6+' },
+      { key: 'stat_violin',      label: 'Số năm Violin',      placeholder: '4+' },
+      { key: 'stat_tranh',       label: 'Số tranh triển lãm', placeholder: '64' },
+      { key: 'stat_masterclass', label: 'Số Masterclass',     placeholder: '6+' },
     ]
   },
   {
@@ -29,12 +47,12 @@ const SECTIONS = [
     title: '💭 Ô mơ ước trang chủ',
     desc: 'Nội dung khi click vào Violin, Hội họa, Que sera sera',
     fields: [
-      { key: 'dream_violin_title',   label: 'Tiêu đề Violin',         placeholder: '🎻 Violin — Đam mê từ tiếng đàn đầu tiên' },
-      { key: 'dream_violin_body',    label: 'Nội dung Violin',         placeholder: 'Mô tả về violin...' },
-      { key: 'dream_hoihoa_title',   label: 'Tiêu đề Hội họa',        placeholder: '🎨 Hội họa — Thế giới màu sắc của Anna' },
-      { key: 'dream_hoihoa_body',    label: 'Nội dung Hội họa',        placeholder: 'Mô tả về hội họa...' },
-      { key: 'dream_quesera_title',  label: 'Tiêu đề Que sera sera',   placeholder: '🦷 Que sera sera — Ước mơ Bác sỹ Nha khoa' },
-      { key: 'dream_quesera_body',   label: 'Nội dung Que sera sera',  placeholder: 'Mô tả về ước mơ...' },
+      { key: 'dream_violin_title',  label: 'Tiêu đề Violin',        placeholder: '🎻 Violin — Đam mê từ tiếng đàn đầu tiên' },
+      { key: 'dream_violin_body',   label: 'Nội dung Violin',        placeholder: 'Mô tả về violin...' },
+      { key: 'dream_hoihoa_title',  label: 'Tiêu đề Hội họa',       placeholder: '🎨 Hội họa — Thế giới màu sắc của Anna' },
+      { key: 'dream_hoihoa_body',   label: 'Nội dung Hội họa',       placeholder: 'Mô tả về hội họa...' },
+      { key: 'dream_quesera_title', label: 'Tiêu đề Que sera sera',  placeholder: '🦷 Que sera sera — Ước mơ Bác sỹ Nha khoa' },
+      { key: 'dream_quesera_body',  label: 'Nội dung Que sera sera', placeholder: 'Mô tả về ước mơ...' },
     ]
   },
   {
@@ -42,12 +60,12 @@ const SECTIONS = [
     title: '📋 Tên các chuyên mục',
     desc: 'Đổi tên hiển thị trên menu và trang chủ',
     fields: [
-      { key: 'menu_nhatky',    label: 'Nhật Ký',    placeholder: 'Nhật Ký' },
-      { key: 'menu_amnhac',    label: 'Âm Nhạc',    placeholder: 'Âm Nhạc' },
-      { key: 'menu_nghethuat', label: 'Nghệ Thuật', placeholder: 'Nghệ Thuật' },
-      { key: 'menu_hocthuat',  label: 'Học Thuật',  placeholder: 'Học Thuật' },
-      { key: 'menu_banbe',     label: 'Bạn Bè',     placeholder: 'Bạn Bè' },
-      { key: 'menu_xahoi',     label: 'Xã Hội',     placeholder: 'Xã Hội' },
+      { key: 'menu_nhatky',    label: 'Nhật ký',    placeholder: 'Nhật ký' },
+      { key: 'menu_amnhac',    label: 'Âm nhạc',    placeholder: 'Âm nhạc' },
+      { key: 'menu_nghethuat', label: 'Nghệ thuật', placeholder: 'Nghệ thuật' },
+      { key: 'menu_hocthuat',  label: 'Học thuật',  placeholder: 'Học thuật' },
+      { key: 'menu_banbe',     label: 'Bạn bè',     placeholder: 'Bạn bè' },
+      { key: 'menu_xahoi',     label: 'Xã hội',     placeholder: 'Xã hội' },
     ]
   },
   {
@@ -61,12 +79,12 @@ const SECTIONS = [
 ]
 
 const THEME_COLORS = [
-  { key: 'rose',    label: 'Hồng',  bg: 'bg-rose-500' },
-  { key: 'amber',   label: 'Vàng',  bg: 'bg-amber-500' },
-  { key: 'emerald', label: 'Xanh lá', bg: 'bg-emerald-500' },
+  { key: 'rose',    label: 'Hồng',       bg: 'bg-rose-500' },
+  { key: 'amber',   label: 'Vàng',       bg: 'bg-amber-500' },
+  { key: 'emerald', label: 'Xanh lá',    bg: 'bg-emerald-500' },
   { key: 'blue',    label: 'Xanh dương', bg: 'bg-blue-500' },
-  { key: 'purple',  label: 'Tím',   bg: 'bg-purple-500' },
-  { key: 'violet',  label: 'Tím đậm', bg: 'bg-violet-500' },
+  { key: 'purple',  label: 'Tím',        bg: 'bg-purple-500' },
+  { key: 'violet',  label: 'Tím đậm',    bg: 'bg-violet-500' },
 ]
 
 export default function CaiDatPage() {
@@ -116,7 +134,6 @@ export default function CaiDatPage() {
               <p className="text-xs text-gray-400">{section.desc}</p>
             </div>
 
-            {/* Theme color picker đặc biệt */}
             {section.id === 'theme' ? (
               <div>
                 <label className="block text-xs text-gray-400 uppercase tracking-wide mb-3">Chọn màu chủ đạo</label>
@@ -142,7 +159,7 @@ export default function CaiDatPage() {
                     <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">
                       {field.label}
                     </label>
-                    {field.key.endsWith('_body') ? (
+                    {field.key.endsWith('_body') || field.key === 'bio' ? (
                       <textarea rows={3}
                         value={settings[field.key] || ''}
                         onChange={e => setSettings(prev => ({ ...prev, [field.key]: e.target.value }))}
