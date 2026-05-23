@@ -1,5 +1,5 @@
 // lib/settings.ts
-import { createClient } from '@/lib/supabase/server';   // ← Sửa thành dòng này
+import { createClient } from '../supabase/server';   // ← Dùng đường dẫn tương đối
 
 export async function getSiteSettings() {
   const supabase = createClient();
@@ -10,6 +10,7 @@ export async function getSiteSettings() {
 
   if (error) {
     console.error('Error fetching site settings:', error);
+    // Trả về object rỗng để tránh crash
     return {};
   }
 
