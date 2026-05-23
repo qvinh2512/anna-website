@@ -1,5 +1,5 @@
 // lib/settings.ts
-import { createClient } from './supabase/server';
+import { createClient } from '@/lib/supabase/server';   // ← Sửa thành dòng này
 
 export async function getSiteSettings() {
   const supabase = createClient();
@@ -13,7 +13,6 @@ export async function getSiteSettings() {
     return {};
   }
 
-  // Chuyển thành object dễ dùng: { hero_subtitle: "value", ... }
   return data.reduce((acc: any, item: any) => {
     acc[item.key] = item.value;
     return acc;
