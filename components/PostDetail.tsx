@@ -1,5 +1,6 @@
-import { createClient } from '../app/lib/supabase/server'
-import { notFound } from 'next/navigation'
+'use client'
+import { useEffect, useState } from 'react'
+import { createClient } from '../app/lib/supabase/client'
 import LightboxGallery from './LightboxGallery'
 
 function getYouTubeId(url: string) {
@@ -10,10 +11,28 @@ function getYouTubeId(url: string) {
 
 type Props = { slug: string; backHref: string; backLabel: string }
 
-export default async function PostDetail({ slug, backHref, backLabel }: Props) {
+export default function PostDetail({ slug, backHref, backLabel }: Props) {
   const supabase = createClient()
-  const { data: post } = await supabase.from('posts').select('*').eq('slug', slug).single()
-  if (!post) notFound()
+  const [post, setPost] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.from('posts').select('*').eq('slug', slug).single()
+      .then(({ data }) => { setPost(data); setLoading(false) })
+  }, [slug])
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-gray-400 text-sm">Đang tải...</div>
+    </div>
+  )
+
+  if (!post) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-gray-400 text-sm">Không tìm thấy bài viết.</div>
+    </div>
+  )
+
   const ytId = post.youtube_url ? getYouTubeId(post.youtube_url) : null
 
   return (
