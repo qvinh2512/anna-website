@@ -40,7 +40,7 @@ export default async function Footer() {
               <Link href="/nhat-ky" className="hover:text-pink-600 transition-colors block">{settings.menu_nhatky || "Nhật Ký"}</Link>
               <Link href="/am-nhac" className="hover:text-pink-600 transition-colors block">{settings.menu_amnhac || "Âm Nhạc"}</Link>
               <Link href="/nghe-thuat" className="hover:text-pink-600 transition-colors block">{settings.menu_nghethuat || "Nghệ Thuật"}</Link>
-              <Link href="/hoc-tap" className="hover:text-pink-600 transition-colors block">{settings.menu_hocthuat || "Học Thuật"}</Link>
+              <Link href="/hoc-thuat" className="hover:text-pink-600 transition-colors block">{settings.menu_hocthuat || "Học thuật"}</Link>
               <Link href="/masterclass" className="hover:text-pink-600 transition-colors block">Masterclass</Link>
             </div>
           </div>
