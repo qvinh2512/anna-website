@@ -1,21 +1,25 @@
 // lib/settings.ts
-import { createClient } from '../supabase/server';   // ← Dùng đường dẫn tương đối
+import { createClient } from '@/lib/supabase/server';   // Dùng alias @ (khuyến nghị)
 
 export async function getSiteSettings() {
-  const supabase = createClient();
-  
-  const { data, error } = await supabase
-    .from('site_settings')
-    .select('key, value');
+  try {
+    const supabase = createClient();
+    
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('key, value');
 
-  if (error) {
-    console.error('Error fetching site settings:', error);
-    // Trả về object rỗng để tránh crash
+    if (error) {
+      console.error('Error fetching site settings:', error);
+      return {};
+    }
+
+    return data.reduce((acc: any, item: any) => {
+      acc[item.key] = item.value;
+      return acc;
+    }, {});
+  } catch (err) {
+    console.error('Failed to fetch settings:', err);
     return {};
   }
-
-  return data.reduce((acc: any, item: any) => {
-    acc[item.key] = item.value;
-    return acc;
-  }, {});
 }
