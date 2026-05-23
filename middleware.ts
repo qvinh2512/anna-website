@@ -22,11 +22,24 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Nếu chưa đăng nhập mà cố vào /admin → redirect về trang đăng nhập
-  if (!user && request.nextUrl.pathname.startsWith('/admin')) {
-    const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/dang-nhap'
-    return NextResponse.redirect(loginUrl)
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!user) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/dang-nhap'
+      return NextResponse.redirect(loginUrl)
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.role !== 'anna') {
+      const homeUrl = request.nextUrl.clone()
+      homeUrl.pathname = '/'
+      return NextResponse.redirect(homeUrl)
+    }
   }
 
   return supabaseResponse
