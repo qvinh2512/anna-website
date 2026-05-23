@@ -1,5 +1,5 @@
 // lib/settings.ts
-import { createClient } from '@/lib/supabase/server';   // Dùng alias @ (khuyến nghị)
+import { createClient } from '../supabase/server';   // Dùng alias @ (khuyến nghị)
 
 export async function getSiteSettings() {
   try {
