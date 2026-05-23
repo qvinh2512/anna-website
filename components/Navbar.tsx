@@ -42,11 +42,11 @@ export default function Navbar({ user, profile }: any) {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <Link href="/nhat-ky" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Nhật ký</Link>
-          <Link href="/am-nhac" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Âm nhạc</Link>
-          <Link href="/nghe-thuat" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Nghệ thuật</Link>
-          <Link href="/hoc-thuat" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Học tập</Link>
-          <Link href="/ban-be" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Bạn bè</Link>
+          <Link href="/nhat-ky" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Nhật Ký</Link>
+          <Link href="/am-nhac" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Âm Nhạc</Link>
+          <Link href="/nghe-thuat" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Nghệ Thuật</Link>
+          <Link href="/hoc-thuat" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Học thuật</Link>
+          <Link href="/ban-be" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Bạn Bè</Link>
           <Link href="/masterclass" className="text-pink-600 dark:text-pink-400 font-semibold">Masterclass</Link>
         </div>
 
@@ -75,12 +75,12 @@ export default function Navbar({ user, profile }: any) {
       {isOpen && (
         <div className="md:hidden border-t bg-white dark:bg-gray-950 py-6">
           <div className="flex flex-col px-6 gap-6 text-base font-medium">
-            <Link href="/nhat-ky">Nhật ký</Link>
-            <Link href="/am-nhac">Âm nhạc</Link>
-            <Link href="/nghe-thuat">Nghệ thuật</Link>
-            <Link href="/hoc-thuat">Học tập</Link>
-            <Link href="/ban-be">Bạn bè</Link>
-            <Link href="/masterclass" className="text-pink-600">Masterclass</Link>
+            <Link href="/nhat-ky">Nhật Ký</Link>
+            <Link href="/am-nhac">Âm Nhạc</Link>
+            <Link href="/nghe-thuat">Nghệ Thuật</Link>
+            <Link href="/hoc-thuat">Học thuật</Link>
+            <Link href="/ban-be">Bạn Bè</Link>
+            <Link href="/masterclass">Masterclass</Link>
           </div>
         </div>
       )}
