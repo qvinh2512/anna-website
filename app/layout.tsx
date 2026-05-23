@@ -2,87 +2,39 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import { createClient } from './lib/supabase/server'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'Anna Duyên An',
-  description: 'Nhật ký hành trình Âm nhạc & Nghệ thuật',
+  description: 'Hành trình âm nhạc - nghệ thuật - trưởng thành của Anna Duyên An',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const { data: profile } = user ? await supabase
-    .from('profiles').select('full_name,role')
-    .eq('id', user.id).single() : { data: null }
-
-  const { data: settingsData } = await supabase
-    .from('site_settings').select('key,value')
-  const s: Record<string, string> = {}
-  if (settingsData) settingsData.forEach(d => { s[d.key] = d.value || '' })
-
-  const menuItems = [
-    ['📖', s['menu_nhatky'] || 'Nhật Ký',    '/nhat-ky'],
-    ['🎻', s['menu_amnhac'] || 'Âm Nhạc',    '/am-nhac'],
-    ['🎨', s['menu_nghethuat'] || 'Nghệ Thuật', '/nghe-thuat'],
-    ['📚', s['menu_hocthuat'] || 'Học Thuật',  '/hoc-thuat'],
-    ['👫', s['menu_banbe'] || 'Bạn Bè',      '/ban-be'],
-    ['🌏', s['menu_xahoi'] || 'Xã Hội',      '/xa-hoi'],
-  ]
+    .from('profiles').select('full_name,role').eq('id', user.id).single() 
+    : { data: null }
 
   return (
-    <html lang="vi">
+    <html lang="vi" className="scroll-smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
       </head>
-      <body className="min-h-screen flex flex-col bg-amber-50">
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b h-16 flex items-center justify-between px-6">
-          <a href="/" className="text-lg font-semibold" style={{fontFamily:"'Playfair Display',serif"}}>
-            Anna <span className="text-rose-500">Duyên An</span>
-          </a>
-          <div className="flex items-center gap-1 text-sm">
-            {menuItems.map(([icon, label, href]) => (
-              <a key={href} href={href}
-                className="px-3 py-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors hidden lg:block">
-                {icon} {label}
-              </a>
-            ))}
-            {user ? (
-              <div className="flex items-center gap-2 ml-2">
-                <div className="text-right">
-                  <p className="text-xs text-gray-500 leading-none">Xin chào</p>
-                  <p className="text-xs font-semibold text-gray-700 leading-none mt-0.5">
-                    {profile?.full_name || user.email?.split('@')[0]}
-                  </p>
-                </div>
-                {(profile?.role === 'anna' || profile?.role === 'admin') && (
-                  <a href="/admin"
-                    className="px-4 py-1.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 text-sm">
-                    ⚙️ Quản lý
-                  </a>
-                )}
-              </div>
-            ) : (
-              <a href="/dang-nhap"
-                className="ml-2 px-4 py-1.5 border border-rose-300 text-rose-500 rounded-full text-sm hover:bg-rose-50">
-                Đăng nhập
-              </a>
-            )}
-          </div>
-        </nav>
-        <main className="flex-1 pt-16">{children}</main>
-        <footer className="bg-gray-900 text-center py-8">
-          <p className="text-white text-lg italic mb-1" style={{fontFamily:"'Playfair Display',serif"}}>
-            Anna <span className="text-yellow-400">Duyên An</span>
-          </p>
-          <p className="text-gray-400 text-sm italic mb-3">"Que sera sera"</p>
-          <a href={s['social_youtube'] || 'https://www.youtube.com/@AnnaDuyenAn'} target="_blank"
-            className="text-red-400 text-sm hover:text-red-300">
-            ▶ YouTube @AnnaDuyenAn
-          </a>
-          <p className="mt-3 text-gray-600 text-xs">© 2025 Anna Duyên An · TP. Hồ Chí Minh</p>
-        </footer>
-        <Toaster position="bottom-right" />
+      <body className="min-h-screen bg-[#fdfaf5] dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+        <Navbar user={user} profile={profile} />
+        
+        <main className="pt-16">
+          {children}
+        </main>
+
+        <Footer />
+        <Toaster position="top-center" />
       </body>
     </html>
   )
