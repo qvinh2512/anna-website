@@ -40,46 +40,32 @@ export default function Navbar({ user, profile }: any) {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
           <Link href="/nhat-ky" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Nhật Ký</Link>
           <Link href="/am-nhac" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Âm Nhạc</Link>
           <Link href="/nghe-thuat" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Nghệ Thuật</Link>
-          <Link href="/hoc-tap" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Học Tập</Link>
+          <Link href="/hoc-thuat" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Học tập</Link>
           <Link href="/ban-be" className="hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Bạn Bè</Link>
           <Link href="/masterclass" className="text-pink-600 dark:text-pink-400 font-semibold">Masterclass</Link>
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={toggleDarkMode}
-            className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
-            aria-label="Toggle dark mode"
-          >
+          <button onClick={toggleDarkMode} className="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
           {user ? (
-            <Link 
-              href="/admin" 
-              className="px-6 py-2.5 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium rounded-2xl transition-colors"
-            >
+            <Link href="/admin" className="px-6 py-2.5 bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium rounded-2xl transition-colors">
               Admin
             </Link>
           ) : (
-            <Link 
-              href="/auth/login" 
-              className="px-6 py-2.5 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-2xl text-sm font-medium transition-colors"
-            >
+            <Link href="/dang-nhap" className="px-6 py-2.5 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 rounded-2xl text-sm font-medium transition-colors">
               Đăng nhập
             </Link>
           )}
 
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)} 
-            className="md:hidden p-3"
-          >
+          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden p-3">
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -89,12 +75,12 @@ export default function Navbar({ user, profile }: any) {
       {isOpen && (
         <div className="md:hidden border-t bg-white dark:bg-gray-950 py-6">
           <div className="flex flex-col px-6 gap-6 text-base font-medium">
-            <Link href="/nhat-ky" className="py-1">Nhật Ký</Link>
-            <Link href="/am-nhac" className="py-1">Âm Nhạc</Link>
-            <Link href="/nghe-thuat" className="py-1">Nghệ Thuật</Link>
-            <Link href="/hoc-tap" className="py-1">Học Tập</Link>
-            <Link href="/ban-be" className="py-1">Bạn Bè</Link>
-            <Link href="/masterclass" className="py-1 text-pink-600">Masterclass</Link>
+            <Link href="/nhat-ky">Nhật Ký</Link>
+            <Link href="/am-nhac">Âm Nhạc</Link>
+            <Link href="/nghe-thuat">Nghệ Thuật</Link>
+            <Link href="/hoc-thuat">Học tập</Link>
+            <Link href="/ban-be">Bạn Bè</Link>
+            <Link href="/masterclass" className="text-pink-600">Masterclass</Link>
           </div>
         </div>
       )}
