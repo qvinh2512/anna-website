@@ -1,103 +1,75 @@
-// app/masterclass/page.tsx
-import { getSiteSettings } from '@/lib/settings';
-import Image from 'next/image';
-import Link from 'next/link';
+'use client'
+import { useState, useEffect } from 'react'
+import { createClient } from '../lib/supabase/client'
 
-export default async function MasterclassPage() {
-  const settings = await getSiteSettings();
+type Masterclass = {
+  id: string
+  date: string
+  professor: string
+  event: string
+  piece: string
+  color: string
+  event_date: string
+}
+
+const colorMap: Record<string, string> = {
+  rose:    'border-rose-200 bg-rose-50',
+  amber:   'border-amber-200 bg-amber-50',
+  emerald: 'border-emerald-200 bg-emerald-50',
+  blue:    'border-blue-200 bg-blue-50',
+  purple:  'border-purple-200 bg-purple-50',
+}
+
+export default function MasterclassPage() {
+  const supabase = createClient()
+  const [masterclasses, setMasterclasses] = useState<Masterclass[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.from('masterclasses').select('id,date,professor,event,piece,color,event_date')
+      .order('event_date', { ascending: false })
+      .then(({ data }) => { if (data) setMasterclasses(data); setLoading(false) })
+  }, [])
 
   return (
-    <div className="min-h-screen bg-[#fdfaf5] dark:bg-gray-950">
-      {/* Hero Section */}
-      <div className="relative h-[70vh] flex items-center justify-center bg-black overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/violin-masterclass.jpg')] bg-cover bg-center opacity-70"></div>
-        <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-          <div className="inline-block px-4 py-1 bg-pink-600 text-white text-sm rounded-full mb-6">
-            Masterclass Violin
-          </div>
-          <h1 className="text-6xl md:text-7xl font-bold text-white tracking-tighter mb-6">
-            Masterclass<br />cùng Anna Duyên An
+    <div style={{backgroundColor:'#fffbf5'}} className="min-h-screen">
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <div className="mb-10">
+          <p className="text-amber-600 text-xs tracking-widest uppercase mb-2">Học hỏi từ đỉnh cao</p>
+          <h1 className="text-4xl mb-3" style={{fontFamily:"'Playfair Display',serif"}}>
+            🎓 Các lớp <em>Masterclass</em>
           </h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto">
-            Chia sẻ kinh nghiệm, kỹ thuật violin và hành trình âm nhạc từ cô bé tài năng sinh năm 2014
-          </p>
+          <p className="text-gray-500 text-sm">Những buổi học với các Giáo sư violin hàng đầu trong hành trình của Anna.</p>
         </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-2 gap-16">
-          {/* Thông tin Masterclass */}
-          <div>
-            <h2 className="text-4xl font-semibold mb-8">Masterclass Violin</h2>
-            
-            <div className="space-y-8">
-              <div className="bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-sm">
-                <h3 className="text-2xl font-medium mb-4">Nội dung Masterclass</h3>
-                <ul className="space-y-4 text-lg">
-                  <li className="flex gap-3">🎻 Kỹ thuật cơ bản & tư thế đúng</li>
-                  <li className="flex gap-3">🎵 Cách diễn đạt cảm xúc qua âm nhạc</li>
-                  <li className="flex gap-3">📝 Luyện tập hiệu quả cho trẻ em</li>
-                  <li className="flex gap-3">🌟 Chuẩn bị thi & biểu diễn</li>
-                  <li className="flex gap-3">❤️ Xây dựng tình yêu âm nhạc lâu dài</li>
-                </ul>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1,2,3].map(i => (
+              <div key={i} className="border-2 border-gray-100 bg-gray-50 rounded-2xl p-5 animate-pulse">
+                <div className="h-3 bg-gray-200 rounded w-20 mb-3" />
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
               </div>
-
-              <div className="bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-sm">
-                <h3 className="text-2xl font-medium mb-4">Đối tượng</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Trẻ em từ 7–16 tuổi, phụ huynh và giáo viên violin muốn học hỏi phương pháp dạy con hiệu quả.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
-
-          {/* Video & Đăng ký */}
-          <div>
-            <div className="aspect-video bg-black rounded-3xl overflow-hidden mb-8">
-              <iframe 
-                width="100%" 
-                height="100%" 
-                src="https://www.youtube.com/embed/VIDEO_ID_HERE" 
-                title="Masterclass Anna Duyên An"
-                allowFullScreen
-                className="rounded-3xl"
-              ></iframe>
-            </div>
-
-            <div className="bg-gradient-to-br from-pink-50 to-violet-50 dark:from-gray-900 dark:to-gray-800 p-8 rounded-3xl">
-              <h3 className="text-2xl font-semibold mb-6">Đăng ký tham gia Masterclass</h3>
-              
-              <div className="space-y-4">
-                <button className="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-2xl transition-all text-lg">
-                  Đăng ký Masterclass sắp tới
-                </button>
-                
-                <p className="text-center text-sm text-gray-500">
-                  Hoặc liên hệ qua email: <span className="font-medium">{settings.email || "contact@annaduyenan.info"}</span>
-                </p>
-              </div>
-            </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {masterclasses.map(m => (
+              <a key={m.id} href={`/masterclass/${m.id}`}
+                className={`border-2 ${colorMap[m.color] || colorMap.rose} rounded-2xl p-5 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 block`}>
+                <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{m.date}</p>
+                <h3 className="font-semibold text-gray-900 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{m.professor}</h3>
+                <p className="text-xs text-gray-500 mb-3">{m.event}</p>
+                {m.piece && (
+                  <div className="bg-white rounded-lg px-3 py-2 text-xs text-gray-700 italic border border-gray-100 mb-3">
+                    🎵 {m.piece}
+                  </div>
+                )}
+                <p className="text-xs text-rose-400">Xem chi tiết →</p>
+              </a>
+            ))}
           </div>
-        </div>
-
-        {/* Các video nổi bật */}
-        <div className="mt-20">
-          <h2 className="text-3xl font-semibold mb-10">Các buổi Masterclass nổi bật</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Bạn có thể thêm nhiều card video ở đây */}
-            <div className="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-sm">
-              <div className="h-48 bg-gray-200 dark:bg-gray-700 relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  ▶️
-                </div>
-              </div>
-              <div className="p-6">
-                <p className="font-medium">Que Sera Sera - Violin Performance</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
-  );
+  )
 }
