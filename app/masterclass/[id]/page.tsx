@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '../../lib/supabase/client'
 import { useParams, useRouter } from 'next/navigation'
+import LightboxGallery from '../../../components/LightboxGallery'
 
 type Masterclass = {
   id: string; date: string; professor: string; event: string
@@ -21,66 +22,17 @@ function getYouTubeId(url: string) {
   return match ? match[1] : null
 }
 
-function Lightbox({ images, index, onClose, onPrev, onNext }: {
-  images: string[], index: number,
-  onClose: () => void, onPrev: () => void, onNext: () => void
-}) {
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft') onPrev()
-      if (e.key === 'ArrowRight') onNext()
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [onClose, onPrev, onNext])
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90" onClick={onClose}>
-      <button onClick={onClose} className="absolute top-4 right-4 text-white/70 hover:text-white text-3xl w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 transition-all z-10">✕</button>
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/60 text-sm">{index + 1} / {images.length}</div>
-      {images.length > 1 && (
-        <button onClick={e => { e.stopPropagation(); onPrev() }} className="absolute left-4 text-white/70 hover:text-white w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all text-3xl z-10">‹</button>
-      )}
-      <div className="max-w-4xl max-h-[85vh] px-16" onClick={e => e.stopPropagation()}>
-        <img src={images[index]} alt={`Ảnh ${index + 1}`} className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl" />
-      </div>
-      {images.length > 1 && (
-        <button onClick={e => { e.stopPropagation(); onNext() }} className="absolute right-4 text-white/70 hover:text-white w-12 h-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all text-3xl z-10">›</button>
-      )}
-      {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          {images.map((_, i) => (
-            <div key={i} className={`w-2 h-2 rounded-full transition-all ${i === index ? 'bg-white scale-125' : 'bg-white/40'}`} />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export default function MasterclassDetailPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
   const [mc, setMc] = useState<Masterclass | null>(null)
   const [loading, setLoading] = useState(true)
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   useEffect(() => {
     supabase.from('masterclasses').select('*').eq('id', params.id).single()
       .then(({ data }) => { setMc(data); setLoading(false) })
   }, [params.id])
-
-  const closeLightbox = useCallback(() => setLightboxIndex(null), [])
-  const prevImage = useCallback(() => {
-    if (!mc) return
-    setLightboxIndex(i => i === null ? null : (i - 1 + mc.images.length) % mc.images.length)
-  }, [mc])
-  const nextImage = useCallback(() => {
-    if (!mc) return
-    setLightboxIndex(i => i === null ? null : (i + 1) % mc.images.length)
-  }, [mc])
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-400 text-sm">Đang tải...</div></div>
   if (!mc) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-400 text-sm">Không tìm thấy.</div></div>
@@ -90,9 +42,6 @@ export default function MasterclassDetailPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-12">
-      {lightboxIndex !== null && mc.images && (
-        <Lightbox images={mc.images} index={lightboxIndex} onClose={closeLightbox} onPrev={prevImage} onNext={nextImage} />
-      )}
       <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-400 hover:text-gray-600 text-sm mb-8">← Quay lại</button>
       <div className={`bg-gradient-to-br ${gradient} rounded-3xl p-8 text-white mb-8`}>
         <p className="text-white/70 text-xs uppercase tracking-widest mb-3">🎻 Masterclass</p>
@@ -124,18 +73,7 @@ export default function MasterclassDetailPage() {
       {mc.images && mc.images.length > 0 && (
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">📸 Hình ảnh</h2>
-          <div className={`${mc.images.length === 1 ? 'flex justify-center' : 'grid grid-cols-2 gap-3'}`}>
-            {mc.images.map((img, i) => (
-              <div key={i} onClick={() => setLightboxIndex(i)}
-                className="rounded-xl overflow-hidden shadow-md cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-200 relative group">
-                <img src={img} alt={`Ảnh ${i+1}`} className="w-full h-auto object-contain block" />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
-                  <span className="text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity">🔍</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-gray-400 text-center mt-3">Click vào ảnh để phóng to</p>
+          <LightboxGallery images={mc.images} />
         </div>
       )}
       <div className="border-t border-gray-100 pt-6 text-center">
