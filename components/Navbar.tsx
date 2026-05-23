@@ -35,7 +35,7 @@ export default function Navbar({ user, profile }: any) {
             A
           </div>
           <div>
-            <div className="font-semibold text-2xl tracking-tighter">Anna Duyên An</div>
+            <div className="font-semibold text-xl tracking-tighter whitespace-nowrap">Anna Duyên An</div>
             <div className="text-xs text-gray-500 dark:text-gray-400 -mt-1">Violin • Art • Journey</div>
           </div>
         </Link>
