@@ -35,6 +35,15 @@ const SECTIONS = [
     ]
   },
   {
+    id: 'video',
+    title: '🎬 Video nổi bật',
+    desc: 'Video phát trực tiếp ở trang chủ và trang English. Dán link YouTube, để trống thì dùng video mặc định.',
+    fields: [
+      { key: 'featured_video_url',   label: 'Link YouTube',  placeholder: 'https://youtu.be/QAIPDAqVjkY' },
+      { key: 'featured_video_title', label: 'Tên bài',       placeholder: 'Concerto in A minor Mov.1 – Antonio Vivaldi' },
+    ]
+  },
+  {
     id: 'social',
     title: '🔗 Mạng xã hội',
     desc: 'Link các trang mạng xã hội của Anna',

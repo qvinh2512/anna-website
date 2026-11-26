@@ -31,7 +31,9 @@ export default async function EnglishPage() {
   const { data: videoRows } = await supabase
     .from('videos').select('title,youtube_url')
     .order('sort_order').order('created_at', { ascending: false }).limit(1)
-  const videoId = ytId(videoRows?.[0]?.youtube_url)
+  const featuredUrl = s['featured_video_url'] || 'https://youtu.be/QAIPDAqVjkY'
+  const featuredTitle = s['featured_video_title'] || (s['featured_video_url'] ? '' : 'Concerto in A minor Mov.1 – Antonio Vivaldi')
+  const videoId = ytId(featuredUrl)
 
   // Auto-updating facts (Vietnam time, school year starts in September)
   const now = new Date(Date.now() + 7 * 60 * 60 * 1000)
@@ -135,11 +137,11 @@ export default async function EnglishPage() {
         <h2 className="text-2xl lg:text-3xl text-white italic mb-3" style={{ fontFamily: "'Playfair Display',serif" }}>
           Watch Anna perform
         </h2>
-        <p className="text-white/50 mb-8 text-sm">{videoRows?.[0]?.title || 'Violin performances and masterclasses'}</p>
+        <p className="text-white/50 mb-8 text-sm">{featuredTitle || 'Violin performances and masterclasses'}</p>
         {videoId && (
           <div className="max-w-3xl mx-auto px-6 mb-8">
             <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-              <iframe src={`https://www.youtube-nocookie.com/embed/${videoId}`} title={videoRows?.[0]?.title || 'Anna Duyen An'}
+              <iframe src={`https://www.youtube-nocookie.com/embed/${videoId}`} title={featuredTitle || 'Anna Duyen An'}
                 className="w-full h-full" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
             </div>
           </div>

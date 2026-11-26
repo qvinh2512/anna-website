@@ -4,6 +4,12 @@ import { createClient } from './lib/supabase/client'
 // Dữ liệu trang chủ làm mới tối đa mỗi 60 giây
 export const revalidate = 60
 
+// Video phát ở trang chủ — đổi được trong /admin/cai-dat → Video nổi bật
+const DEFAULT_VIDEO = {
+  title: 'Concerto in A minor Mov.1 – Antonio Vivaldi',
+  youtube_url: 'https://youtu.be/QAIPDAqVjkY',
+}
+
 const THU_TU = ['nhất', 'hai', 'ba', 'tư', 'năm', 'sáu', 'bảy', 'tám', 'chín']
 
 export default async function HomePage() {
@@ -89,7 +95,10 @@ export default async function HomePage() {
       masterclasses={masterclasses || []}
       auto={auto}
       latestPosts={latestPosts || []}
-      video={videoRows?.[0] || null}
+      video={{
+        title: settings['featured_video_title'] || (settings['featured_video_url'] ? '' : DEFAULT_VIDEO.title),
+        youtube_url: settings['featured_video_url'] || DEFAULT_VIDEO.youtube_url,
+      }}
     />
   )
 }
