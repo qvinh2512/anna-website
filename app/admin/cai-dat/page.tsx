@@ -25,12 +25,13 @@ const SECTIONS = [
   },
   {
     id: 'stats',
-    title: '📊 Thống kê trang chủ',
-    desc: 'Các con số hiển thị ở trang chủ',
+    title: '📊 Thống kê & mốc thời gian',
+    desc: 'Tuổi, lớp, năm Nhạc viện, số năm violin và số Masterclass được TỰ TÍNH mỗi năm học (từ tháng 9). Chỉ cần nhập mốc gốc một lần.',
     fields: [
-      { key: 'stat_violin',      label: 'Số năm Violin',      placeholder: '4+' },
-      { key: 'stat_tranh',       label: 'Số tranh triển lãm', placeholder: '64' },
-      { key: 'stat_masterclass', label: 'Số Masterclass',     placeholder: '6+' },
+      { key: 'nhacvien_start_year', label: 'Năm vào Nhạc viện (năm nhất)',  placeholder: '2025' },
+      { key: 'lop_2025',            label: 'Lớp ở năm học 2025–2026',       placeholder: '6' },
+      { key: 'violin_start_year',   label: 'Năm bắt đầu học violin',        placeholder: '2021' },
+      { key: 'stat_tranh',          label: 'Số tranh triển lãm (nhập tay)', placeholder: '64' },
     ]
   },
   {

@@ -20,12 +20,52 @@ const colorMap: Record<string, string> = {
   purple:  'border-purple-200 bg-purple-50',
 }
 
+type Auto = {
+  age: string
+  lop: string
+  namHoc: string
+  nhacVienText: string
+  violinYears: string
+  masterclassCount: string
+}
+
+type Post = {
+  id: string
+  title: string
+  slug: string
+  excerpt?: string
+  content?: string
+  images?: string[]
+  youtube_url?: string
+  published_at?: string
+  category_id: number
+}
+
+type Video = { title: string; youtube_url: string } | null
+
+const CAT: Record<number, { path: string; label: string; color: string }> = {
+  1: { path: 'nhat-ky',    label: 'Nhật ký',    color: 'text-rose-500 bg-rose-50' },
+  3: { path: 'nghe-thuat', label: 'Nghệ thuật', color: 'text-emerald-600 bg-emerald-50' },
+  4: { path: 'hoc-thuat',  label: 'Học thuật',  color: 'text-blue-600 bg-blue-50' },
+  6: { path: 'xa-hoi',     label: 'Xã hội',     color: 'text-violet-600 bg-violet-50' },
+}
+
+function ytId(url?: string) {
+  if (!url) return null
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([^&\n?#]+)/)
+  return m ? m[1] : null
+}
+
 type Props = {
   settings: Settings
   masterclasses: Masterclass[]
+  auto: Auto
+  latestPosts: Post[]
+  video: Video
 }
 
-export default function HomeClient({ settings, masterclasses }: Props) {
+export default function HomeClient({ settings, masterclasses, auto, latestPosts, video }: Props) {
+  const videoId = ytId(video?.youtube_url)
   const [activeDream, setActiveDream] = useState<string | null>(null)
 
   const s = (key: string, fallback: string) => settings[key] || fallback
@@ -57,12 +97,13 @@ export default function HomeClient({ settings, masterclasses }: Props) {
           </p>
           <h1 className="text-4xl sm:text-5xl lg:text-7xl text-white mb-6 lg:mb-8 leading-tight"
             style={{fontFamily:"'Playfair Display',serif"}}>
-            Anna <em className="text-yellow-400">Duyên An</em>
+            Anna <em className="text-yellow-400 whitespace-nowrap">Duyên An</em>
           </h1>
           <div className="text-white/70 text-sm leading-loose mb-6 lg:mb-8">
-            <p>📅 Sinh ngày <strong className="text-white">04.03.2014</strong></p>
-            <p>🏫 Học sinh trường <strong className="text-white">Sedbergh Việt Nam</strong></p>
-            <p>🎻 Năm nhất Trung cấp Violin 9 năm · <strong className="text-white">Nhạc viện TP. HCM</strong></p>
+            <p>📅 Sinh ngày <strong className="text-white">04.03.2014</strong> · {auto.age} tuổi</p>
+            <p>🏫 Học sinh lớp {auto.lop} · <strong className="text-white">Sedbergh Việt Nam</strong></p>
+            <p>🎻 {auto.nhacVienText} · <strong className="text-white">Nhạc viện TP. HCM</strong></p>
+            <p className="text-white/40 text-xs mt-1">Năm học {auto.namHoc}</p>
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4 lg:mb-6">
@@ -90,9 +131,9 @@ export default function HomeClient({ settings, masterclasses }: Props) {
 
           <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 lg:pt-8">
             {[
-              [s('stat_violin', '4+'), 'Năm violin'],
+              [auto.violinYears, 'Năm violin'],
               [s('stat_tranh', '64'), 'Tranh triển lãm'],
-              [s('stat_masterclass', '6+'), 'Masterclass'],
+              [auto.masterclassCount, 'Masterclass'],
             ].map(([n, l]) => (
               <div key={l}>
                 <div className="text-2xl lg:text-3xl text-yellow-400 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{n}</div>
@@ -146,6 +187,51 @@ export default function HomeClient({ settings, masterclasses }: Props) {
         </div>
       </section>
 
+      {/* MỚI CẬP NHẬT */}
+      {latestPosts.length > 0 && (
+        <section className="py-12 lg:py-16 bg-white border-b border-gray-100">
+          <div className="max-w-6xl mx-auto px-6">
+            <p className="text-rose-500 text-xs tracking-widest uppercase mb-2">Nhật ký hành trình</p>
+            <h2 className="text-2xl lg:text-3xl mb-6 lg:mb-8" style={{fontFamily:"'Playfair Display',serif"}}>
+              Mới <em>cập nhật</em>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {latestPosts.map(p => {
+                const cat = CAT[p.category_id] || CAT[1]
+                const id = ytId(p.youtube_url)
+                const cover = p.images?.[0] || (id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null)
+                const text = p.excerpt || (p.content ? p.content.replace(/<[^>]+>/g, ' ').slice(0, 140) + '…' : '')
+                return (
+                  <a key={p.id} href={`/${cat.path}/${p.slug}`}
+                    className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col">
+                    <div className="aspect-[16/10] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                      {cover
+                        ? <img src={cover} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        : <div className="w-full h-full flex items-center justify-center text-4xl opacity-40">🎻</div>}
+                    </div>
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cat.color}`}>{cat.label}</span>
+                        {p.published_at && (
+                          <span className="text-xs text-gray-400">
+                            {new Date(p.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 leading-snug" style={{fontFamily:"'Playfair Display',serif"}}>
+                        {p.title}
+                      </h3>
+                      {text && <p className="text-sm text-gray-500 line-clamp-3">{text}</p>}
+                      <p className="text-xs text-rose-400 mt-auto pt-3">Đọc tiếp →</p>
+                    </div>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* MASTERCLASS */}
       <section className="py-12 lg:py-16 bg-white">
         <div className="max-w-6xl mx-auto px-6">
@@ -154,12 +240,7 @@ export default function HomeClient({ settings, masterclasses }: Props) {
               <p className="text-amber-600 text-xs tracking-widest uppercase mb-2">Học hỏi từ đỉnh cao</p>
               <h2 className="text-2xl lg:text-3xl" style={{fontFamily:"'Playfair Display',serif"}}>Các lớp <em>Masterclass</em></h2>
             </div>
-            <div className="flex items-center gap-3">
-              <a href="/am-nhac" className="text-sm text-rose-500 hover:underline">Xem tất cả →</a>
-              <a href="/admin/masterclass" className="hidden sm:block text-sm px-3 py-1.5 border border-gray-200 rounded-full text-gray-500 hover:bg-gray-50 transition-colors">
-                ✏️ Chỉnh sửa
-              </a>
-            </div>
+            <a href="/masterclass" className="text-sm text-rose-500 hover:underline">Xem tất cả →</a>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {masterclasses.length > 0 ? masterclasses.map(m => (
@@ -196,8 +277,20 @@ export default function HomeClient({ settings, masterclasses }: Props) {
           Xem Anna biểu diễn
         </h2>
         <p className="text-white/50 mb-6 text-sm px-6">
-          Theo dõi kênh YouTube để xem các video violin và masterclass
+          {video?.title || 'Theo dõi kênh YouTube để xem các video violin và masterclass'}
         </p>
+        {videoId && (
+          <div className="max-w-3xl mx-auto px-6 mb-8">
+            <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-black/60 border border-white/10">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+                title={video?.title || 'Anna Duyên An'}
+                className="w-full h-full"
+                allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen />
+            </div>
+          </div>
+        )}
         <a href={s('social_youtube', 'https://www.youtube.com/@AnnaDuyenAn')} target="_blank"
           className="inline-flex items-center gap-2 px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg shadow-red-900/50 text-sm">
           ▶ Subscribe · @AnnaDuyenAn
