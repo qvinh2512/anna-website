@@ -15,6 +15,19 @@ const LINKS = [
   { href: '/ban-be',     label: 'Bạn bè' },
 ];
 
+const LINKS_EN = [
+  { href: '/nhat-ky',       label: 'Diary' },
+  { href: '/am-nhac',       label: 'Music' },
+  { href: '/nghe-thuat',    label: 'Art' },
+  { href: '/hoc-thuat',     label: 'Studies' },
+  { href: '/masterclass',   label: 'Masterclass' },
+  { href: '/en/milestones', label: 'Milestones' },
+  { href: '/ban-be',        label: 'Friends' },
+];
+
+// Cặp trang tương ứng Việt ↔ Anh
+const PAIRS: [string, string][] = [['/thanh-tich', '/en/milestones'], ['/', '/en']];
+
 export default function Navbar({ user, profile }: any) {
   const pathname = usePathname() || '/';
   const [isOpen, setIsOpen] = useState(false);
@@ -44,6 +57,10 @@ export default function Navbar({ user, profile }: any) {
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
   const isEnglish = pathname === '/en' || pathname.startsWith('/en/');
+  const links = isEnglish ? LINKS_EN : LINKS;
+  const switchHref = isEnglish
+    ? (PAIRS.find(([, e]) => e === pathname)?.[0] || '/')
+    : (PAIRS.find(([v]) => v === pathname)?.[1] || '/en');
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
@@ -62,7 +79,7 @@ export default function Navbar({ user, profile }: any) {
         </Link>
 
         <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
-          {LINKS.map(l => (
+          {links.map(l => (
             <Link key={l.href} href={l.href}
               className={`relative py-1 transition-colors ${isActive(l.href)
                 ? 'text-pink-600 dark:text-pink-400 after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-0.5 after:bg-pink-500 after:rounded-full'
@@ -73,7 +90,7 @@ export default function Navbar({ user, profile }: any) {
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-          <Link href={isEnglish ? '/' : '/en'}
+          <Link href={switchHref}
             className="px-2.5 py-1.5 text-xs font-semibold tracking-wide rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-pink-400 hover:text-pink-600 transition-colors"
             title={isEnglish ? 'Tiếng Việt' : 'English'}>
             {isEnglish ? 'VI' : 'EN'}
@@ -96,7 +113,7 @@ export default function Navbar({ user, profile }: any) {
               )}
             </div>
           ) : (
-            <Link href="/dang-nhap" aria-label="Đăng nhập" title="Đăng nhập"
+            <Link href="/dang-nhap" aria-label={isEnglish ? 'Sign in' : 'Đăng nhập'} title={isEnglish ? 'Sign in' : 'Đăng nhập'}
               className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-pink-600 transition-colors">
               <User size={18} />
             </Link>
@@ -111,7 +128,7 @@ export default function Navbar({ user, profile }: any) {
       {isOpen && (
         <div className="lg:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-lg">
           <div className="flex flex-col px-4 py-3 text-base font-medium">
-            {LINKS.map(l => (
+            {links.map(l => (
               <Link key={l.href} href={l.href}
                 className={`px-3 py-3 rounded-xl ${isActive(l.href)
                   ? 'bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400'
