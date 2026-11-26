@@ -72,7 +72,7 @@ export default function HomeClient({ settings, masterclasses, auto, latestPosts,
 
   // Dòng giới thiệu đầu trang: chỉ dùng giá trị trong Cài đặt nếu có dấu tiếng Việt
   const rawSubtitle = settings['hero_subtitle'] || ''
-  const heroSubtitle = /[^\x00-\x7F]/.test(rawSubtitle) ? rawSubtitle : 'Nhật ký · Âm nhạc · Nghệ thuật'
+  const heroSubtitle = /[\u00C0-\u1EF9]/.test(rawSubtitle) ? rawSubtitle : 'Nhật ký · Âm nhạc · Nghệ thuật'
 
   const dreams = [
   { key: 'violin',   label: '🎻 Violin',        color: 'from-rose-500 to-rose-700',   title: s('dream_violin_title', '🎻 Violin'), body: s('dream_violin_body', '') },
