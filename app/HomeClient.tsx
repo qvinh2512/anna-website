@@ -166,7 +166,7 @@ export default function HomeClient({ settings, masterclasses, auto, latestPosts,
           </div>
 
           <a href="/thanh-tich" className="mt-8 inline-flex items-center gap-2 text-sm text-yellow-400/90 hover:text-yellow-300 transition-colors w-fit">
-            🏆 Xem thành tích của Anna →
+            🌱 Những chặng đường đã qua →
           </a>
         </div>
       </section>

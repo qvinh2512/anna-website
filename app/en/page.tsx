@@ -76,7 +76,7 @@ export default async function EnglishPage() {
           </p>
           <div className="flex flex-wrap gap-3">
             <a href="#achievements" className="px-5 py-2.5 bg-yellow-400 text-gray-900 rounded-full text-sm font-medium hover:bg-yellow-300 transition-colors">
-              Achievements
+              Along the way
             </a>
             <a href={`mailto:${email}`} className="px-5 py-2.5 border border-white/30 text-white rounded-full text-sm hover:bg-white/10 transition-colors">
               Contact
@@ -87,8 +87,8 @@ export default async function EnglishPage() {
 
       {/* ACHIEVEMENTS */}
       <section id="achievements" className="max-w-5xl mx-auto px-6 py-16 scroll-mt-20">
-        <p className="text-rose-500 text-xs tracking-widest uppercase mb-2">Milestones</p>
-        <h2 className="text-3xl mb-10" style={{ fontFamily: "'Playfair Display',serif" }}>Achievements</h2>
+        <p className="text-rose-500 text-xs tracking-widest uppercase mb-2">Along the way</p>
+        <h2 className="text-3xl mb-10" style={{ fontFamily: "'Playfair Display',serif" }}>Milestones</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {groups.map(g => (
             <div key={g.key} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
