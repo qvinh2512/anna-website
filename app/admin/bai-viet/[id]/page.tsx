@@ -31,6 +31,7 @@ export default function EditPostPage() {
   const [tags, setTags] = useState('')
   const [images, setImages] = useState<string[]>([])
   const [status, setStatus] = useState('published')
+  const [eventDate, setEventDate] = useState('')
 
   useEffect(() => {
     supabase.from('posts').select('*').eq('id', params.id).single()
@@ -44,6 +45,8 @@ export default function EditPostPage() {
           setTags((data.tags || []).join(', '))
           setImages(data.images || [])
           setStatus(data.status || 'published')
+          const d = data.published_at || data.created_at
+          if (d) setEventDate(new Date(new Date(d).getTime() + 7 * 3600 * 1000).toISOString().slice(0, 10))
         }
         setLoading(false)
       })
@@ -72,7 +75,7 @@ export default function EditPostPage() {
       category_id: catId,
       tags: tags.split(',').map(t => t.trim()).filter(Boolean),
       status: newStatus,
-      published_at: newStatus === 'published' ? new Date().toISOString() : null,
+      published_at: eventDate ? new Date(`${eventDate}T12:00:00+07:00`).toISOString() : new Date().toISOString(),
     }).eq('id', params.id)
     if (error) { alert('Lỗi: ' + error.message) }
     else { setDone(true) }
@@ -121,6 +124,18 @@ export default function EditPostPage() {
             className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300">
             {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
+        </div>
+
+        <div>
+
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">📅 Ngày diễn ra sự kiện</label>
+
+          <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)}
+
+            className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
+
+          <p className="text-xs text-gray-400 mt-1">Đổi ngày này để bài nằm đúng vị trí trên dòng thời gian.</p>
+
         </div>
 
         <div>

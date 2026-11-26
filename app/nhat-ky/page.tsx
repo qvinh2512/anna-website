@@ -49,14 +49,21 @@ export default async function NhatKyPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {posts.map(post => {
+            {posts.map((post, idx) => {
+              const y = post.published_at ? new Date(post.published_at).getFullYear() : null
+              const prevY = idx > 0 && posts[idx - 1].published_at ? new Date(posts[idx - 1].published_at).getFullYear() : null
+              const showYear = y !== null && (idx === 0 || y !== prevY)
               const firstImage = post.images?.[0]
               const ytId = post.youtube_url ? getYouTubeId(post.youtube_url) : null
               const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null
               const coverImage = firstImage || thumb
 
               return (
-                <article key={post.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                <div key={post.id}>
+                {showYear && (
+                  <h2 className={`text-3xl text-gray-300 ${idx === 0 ? '' : 'pt-6'} mb-4`} style={{fontFamily:"'Playfair Display',serif"}}>{y}</h2>
+                )}
+                <article className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                   <div className="flex gap-0">
 
                     {/* Ảnh nhỏ bên trái */}
@@ -117,6 +124,7 @@ export default async function NhatKyPage() {
                     </div>
                   </div>
                 </article>
+                </div>
               )
             })}
           </div>

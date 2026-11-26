@@ -22,6 +22,8 @@ export default function NewPostPage() {
   const [youtube, setYoutube] = useState('')
   const [catId, setCatId]     = useState(1)
   const [tags, setTags]       = useState('')
+  // Ngày diễn ra sự kiện — mặc định hôm nay (giờ Việt Nam), có thể chọn ngày cũ
+  const [eventDate, setEventDate] = useState(() => new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10))
   const [saving, setSaving]   = useState(false)
   const [done, setDone]       = useState(false)
   const [images, setImages]   = useState<string[]>([])
@@ -68,7 +70,7 @@ export default function NewPostPage() {
       images:       images.length > 0 ? images : null,
       tags:         tags.split(',').map(t=>t.trim()).filter(Boolean),
       status,
-      published_at: status === 'published' ? new Date().toISOString() : null,
+      published_at: new Date(`${eventDate}T12:00:00+07:00`).toISOString(),
     })
 
     if (error) { alert('Lỗi: ' + error.message) }
@@ -115,6 +117,14 @@ export default function NewPostPage() {
             className="w-full px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300">
             {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
+        </div>
+
+        {/* Ngày diễn ra */}
+        <div>
+          <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">📅 Ngày diễn ra sự kiện</label>
+          <input type="date" value={eventDate} onChange={e=>setEventDate(e.target.value)}
+            className="px-3 py-2 border rounded-xl text-sm focus:outline-none focus:border-rose-300" />
+          <p className="text-xs text-gray-400 mt-1">Bài sẽ nằm đúng vị trí trên dòng thời gian theo ngày này. Bài mới đăng vẫn hiện ở mục "Mới cập nhật" trang chủ.</p>
         </div>
 
         {/* Tóm tắt */}

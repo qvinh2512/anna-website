@@ -41,7 +41,7 @@ export default async function HomePage() {
     .select('*')
     .in('category_id', [1, 3, 4, 6])
     .eq('status', 'published')
-    .order('published_at', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(3)
 
   // Video nổi bật (video đầu tiên trong Quản lý Video)

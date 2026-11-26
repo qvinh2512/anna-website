@@ -38,6 +38,7 @@ type Post = {
   images?: string[]
   youtube_url?: string
   published_at?: string
+  created_at?: string
   category_id: number
 }
 
@@ -217,6 +218,9 @@ export default function HomeClient({ settings, masterclasses, auto, latestPosts,
                     <div className="p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-2 mb-2">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cat.color}`}>{cat.label}</span>
+                        {p.created_at && Date.now() - new Date(p.created_at).getTime() < 14 * 86400000 && (
+                          <span className="text-[10px] font-semibold uppercase tracking-wide text-white bg-rose-500 px-1.5 py-0.5 rounded">Mới</span>
+                        )}
                         {p.published_at && (
                           <span className="text-xs text-gray-400">
                             {new Date(p.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
