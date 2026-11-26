@@ -70,6 +70,10 @@ export default function HomeClient({ settings, masterclasses, auto, latestPosts,
 
   const s = (key: string, fallback: string) => settings[key] || fallback
 
+  // Dòng giới thiệu đầu trang: chỉ dùng giá trị trong Cài đặt nếu có dấu tiếng Việt
+  const rawSubtitle = settings['hero_subtitle'] || ''
+  const heroSubtitle = /[^\x00-\x7F]/.test(rawSubtitle) ? rawSubtitle : 'Nhật ký · Âm nhạc · Nghệ thuật'
+
   const dreams = [
   { key: 'violin',   label: '🎻 Violin',        color: 'from-rose-500 to-rose-700',   title: s('dream_violin_title', '🎻 Violin'), body: s('dream_violin_body', '') },
   { key: 'hoi-hoa',  label: '🎨 Hội họa',       color: 'from-amber-500 to-amber-700', title: s('dream_hoihoa_title', '🎨 Hội họa'), body: s('dream_hoihoa_body', '') },
@@ -90,10 +94,29 @@ export default function HomeClient({ settings, masterclasses, auto, latestPosts,
   return (
     <div>
       {/* HERO */}
-      <section className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-        <div className="bg-gray-900 flex flex-col justify-center px-6 sm:px-10 lg:px-12 py-16 lg:py-24">
-          <p className="text-rose-400 text-xs tracking-widest uppercase mb-4 lg:mb-6">
-            {s('hero_subtitle', 'Nhật ký · Âm nhạc · Nghệ thuật')}
+      <section className="grid grid-cols-1 lg:grid-cols-2 lg:min-h-[calc(100vh-4rem)]">
+        {/* Ảnh Anna — trên điện thoại hiện trước */}
+        <div className="relative order-first lg:order-last h-[62vh] sm:h-[70vh] lg:h-auto overflow-hidden bg-gray-900">
+          <img src="/anna-hero.jpg" alt="Anna Duyên An biểu diễn violin"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ objectPosition: '40% 22%' }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/85 via-gray-900/10 to-transparent lg:bg-gradient-to-r lg:from-gray-900/70 lg:via-transparent lg:to-transparent" />
+          <div className="absolute bottom-5 left-5 right-5 lg:left-auto lg:right-6 lg:bottom-6 flex gap-2 flex-wrap lg:justify-end">
+            <a href={s('social_youtube', 'https://www.youtube.com/@AnnaDuyenAn')} target="_blank" rel="noopener"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/15 hover:bg-red-600 backdrop-blur-md border border-white/25 text-white rounded-full transition-colors text-xs font-medium">
+              ▶ YouTube
+            </a>
+            <a href={s('social_facebook', 'https://www.facebook.com/anna.duyen.an')} target="_blank" rel="noopener"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white/15 hover:bg-blue-600 backdrop-blur-md border border-white/25 text-white rounded-full transition-colors text-xs font-medium">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              Facebook
+            </a>
+          </div>
+        </div>
+
+        <div className="bg-gray-900 flex flex-col justify-center px-6 sm:px-10 lg:px-14 py-12 lg:py-20">
+          <p className="text-rose-400 text-xs tracking-[0.25em] uppercase mb-4 lg:mb-6">
+            {heroSubtitle}
           </p>
           <h1 className="text-4xl sm:text-5xl lg:text-7xl text-white mb-6 lg:mb-8 leading-tight"
             style={{fontFamily:"'Playfair Display',serif"}}>
@@ -131,38 +154,20 @@ export default function HomeClient({ settings, masterclasses, auto, latestPosts,
 
           <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 lg:pt-8">
             {[
-              [auto.violinYears, 'Năm violin'],
-              [s('stat_tranh', '64'), 'Tranh triển lãm'],
-              [auto.masterclassCount, 'Masterclass'],
-            ].map(([n, l]) => (
-              <div key={l}>
-                <div className="text-2xl lg:text-3xl text-yellow-400 mb-1" style={{fontFamily:"'Playfair Display',serif"}}>{n}</div>
-                <div className="text-xs text-white/40 uppercase tracking-wide">{l}</div>
-              </div>
+              [auto.violinYears, 'Năm violin', '/am-nhac'],
+              [s('stat_tranh', '64'), 'Tranh triển lãm', '/nghe-thuat'],
+              [auto.masterclassCount, 'Masterclass', '/masterclass'],
+            ].map(([n, l, href]) => (
+              <a key={l} href={href} className="group">
+                <div className="text-2xl lg:text-3xl text-yellow-400 mb-1 group-hover:text-yellow-300 transition-colors" style={{fontFamily:"'Playfair Display',serif"}}>{n}</div>
+                <div className="text-[11px] text-white/40 uppercase tracking-wide leading-snug">{l}</div>
+              </a>
             ))}
           </div>
-        </div>
 
-        <div className="bg-gray-800 flex items-center justify-center py-10 lg:py-16 px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex justify-center mb-6 lg:mb-8">
-              <img src="/violin.png" alt="Violin"
-                className="w-48 sm:w-56 lg:w-64 h-auto object-contain drop-shadow-2xl rounded-lg"
-                style={{filter:'drop-shadow(0 20px 60px rgba(0,0,0,0.8))'}} />
-            </div>
-            <p className="text-white/30 text-xs italic mb-4">Stradivarius · 1715</p>
-            <div className="flex gap-3 justify-center flex-wrap">
-              <a href={s('social_youtube', 'https://www.youtube.com/@AnnaDuyenAn')} target="_blank"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors text-xs">
-                ▶ YouTube @AnnaDuyenAn
-              </a>
-              <a href={s('social_facebook', 'https://www.facebook.com/anna.duyen.an')} target="_blank"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors text-xs">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                Facebook Anna Duyên An
-              </a>
-            </div>
-          </div>
+          <a href="/thanh-tich" className="mt-8 inline-flex items-center gap-2 text-sm text-yellow-400/90 hover:text-yellow-300 transition-colors w-fit">
+            🏆 Xem thành tích của Anna →
+          </a>
         </div>
       </section>
 

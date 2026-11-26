@@ -42,6 +42,8 @@ export default async function Footer() {
               <Link href="/nghe-thuat" className="hover:text-pink-600 transition-colors block">{settings.menu_nghethuat || "Nghệ Thuật"}</Link>
               <Link href="/hoc-thuat" className="hover:text-pink-600 transition-colors block">{settings.menu_hocthuat || "Học thuật"}</Link>
               <Link href="/masterclass" className="hover:text-pink-600 transition-colors block">Masterclass</Link>
+              <Link href="/thanh-tich" className="hover:text-pink-600 transition-colors block">Thành tích</Link>
+              <Link href="/en" className="hover:text-pink-600 transition-colors block">English</Link>
             </div>
           </div>
 
@@ -50,10 +52,9 @@ export default async function Footer() {
             <h4 className="font-semibold mb-6 text-lg">Liên hệ</h4>
             <div className="space-y-3 text-[15px]">
               <p>
-                Email: <span className="text-gray-900 dark:text-white">{settings.email || "contact@annaduyenan.info"}</span>
-              </p>
-              <p>
-                Điện thoại: <span className="text-gray-900 dark:text-white">{settings.phone || "+84 123 456 789"}</span>
+                <a href={`mailto:${settings.email || "contact@annaduyenan.info"}`} className="text-gray-900 dark:text-white hover:text-pink-600 transition-colors break-all">
+                  {settings.email || "contact@annaduyenan.info"}
+                </a>
               </p>
             </div>
           </div>

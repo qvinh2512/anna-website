@@ -8,8 +8,9 @@ const SECTIONS = [
   {
     id: 'profile',
     title: '👤 Thông tin cá nhân',
-    desc: 'Hiển thị ở footer',
+    desc: 'Hiển thị ở đầu trang chủ và footer',
     fields: [
+      { key: 'hero_subtitle', label: 'Dòng nhỏ đầu trang chủ (gõ có dấu)', placeholder: 'Nhật ký · Âm nhạc · Nghệ thuật' },
       { key: 'tagline', label: 'Tagline (dưới tên ở footer)', placeholder: 'Violinist • Young Artist' },
       { key: 'bio',     label: 'Tiểu sử ngắn (footer)',       placeholder: 'Hành trình âm nhạc, nghệ thuật và sự trưởng thành của một cô bé tài năng.' },
     ]
@@ -17,10 +18,9 @@ const SECTIONS = [
   {
     id: 'contact',
     title: '📬 Thông tin liên hệ',
-    desc: 'Hiển thị ở phần Liên hệ trong footer',
+    desc: 'Hiển thị ở phần Liên hệ trong footer (số điện thoại không hiển thị công khai để bảo vệ Anna)',
     fields: [
       { key: 'email', label: 'Email',       placeholder: 'contact@annaduyenan.info' },
-      { key: 'phone', label: 'Điện thoại',  placeholder: '+84 123 456 789' },
     ]
   },
   {
